@@ -7,8 +7,8 @@
 > **continuous take** with **HORIZONTAL scroll** (car drives right, dirty→spotless), moody/cinematic,
 > built as **chained video segments** — see `docs/FILM_PIPELINE.md` (authoritative for the film).
 > This supersedes the "12 stills / vertical frame-by-frame / 8-scene cut" framing and the
-> vertical `sceneTimeline` below. The **site is also being re-designed** (new font, new colors, new
-> look); the palette/typography in §4 will be replaced once the owner confirms the new direction.
+> vertical `sceneTimeline` below. The site re-design is **now locked as MINERAL** — see
+> `docs/DESIGN_DIRECTION.md`. Scroll behaviour is specified in `docs/SCROLL_MECHANICS.md`.
 
 ---
 
@@ -50,21 +50,33 @@ Reference composition: `Photo Sep 07 2026, 10 17 30 PM.jpg` — dark wash bay, f
 
 ---
 
-## 4. Art Direction
+## 4. Art Direction — **MINERAL (LOCKED 2026-09-08)**
 
-**Palette:** black · white · soft gray · deep navy · ONE restrained electric accent (used only for type/UI, never the car).
+> ⚠️ The previous palette/typography in this section has been **replaced**. The authoritative spec is
+> **`docs/DESIGN_DIRECTION.md`** — read it before writing any style code.
 
-**Typography:** oversized editorial display headlines; small technical/mono labels; wide tracking; minimal body copy; high contrast; type integrated INTO the scene, never covering the car.
+**Direction: MINERAL.** Brutal monochrome — pure black/white, film fully desaturated
+(`grayscale(1) contrast(1.16)`), oversized condensed type (**Anton**, ~15vw) bleeding off both edges
+and drifting counter to the scroll. Labels in **Archivo** at `.34em` tracking. Mineral blue-grey
+`#8C99A6` for sub-copy and rules.
 
-**UI (only what's necessary):** logo · minimal nav · thin scroll progress indicator · CTA · scene labels.
+**There is deliberately NO chromatic accent.** The only colour on the site is the light inside the
+film. Do not reintroduce an accent hue.
+
+Chosen by the owner on 2026-09-08 from a live three-way scroll comparison
+(`public/direction-lab.html`), beating "Apex" (cold blue technical) and "Tungsten" (warm serif).
+
+**UI (only what's necessary):** wordmark · minimal nav · hairline progress rail + giant numeral · CTA · station labels.
 
 **Forbidden:** SaaS gradients · glassmorphism · card grids · rounded-everything · sci-fi portals · game-like visuals · visible human detailer · clutter · decorative motion with no purpose.
 
-Motion: restrained. fade / translate / scale / clip-reveal / overlap. No bounce, no random parallax, no generic scroll-reveals everywhere.
-
----
+Motion: restrained. fade / translate / clip-reveal / counter-parallax. No bounce, no random parallax, no generic scroll-reveals everywhere. **Scroll damping is mandatory — see `docs/SCROLL_MECHANICS.md`.**
 
 ## 5. Scroll Timeline (centralized, tunable)
+
+> ⚠️ **SUPERSEDED.** The vertical 8-scene timeline below is retired. The live spec is the six
+> **horizontal** stations in `docs/SCROLL_MECHANICS.md` §6, driving a 3-segment film
+> (`docs/FILM_PIPELINE.md`). Kept here only for history.
 
 Percentages are starting values, tuned in ONE place: `lib/scene/sceneTimeline.ts`.
 

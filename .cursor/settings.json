@@ -1,0 +1,10 @@
+{
+  "plugins": {
+    "claude-design-skillstack/motion-framer": {
+      "enabled": true
+    },
+    "higgsfield": {
+      "enabled": true
+    }
+  }
+}

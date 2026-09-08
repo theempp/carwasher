@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="en" data-dir="apex" data-pacing="cine">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Direction Lab — Horizontal Scroll Scrub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+/* ============ DIRECTION TOKENS ============ */
+:root[data-dir="apex"]{
+  --bg:#08090A; --fg:#EDEFF2; --muted:#6B7280; --accent:#4DA3FF;
+  --scrim:linear-gradient(90deg,rgba(8,9,10,.92) 0%,rgba(8,9,10,.55) 38%,rgba(8,9,10,0) 62%);
+  --display-font:"Archivo",sans-serif; --display-weight:800;
+  --display-size:clamp(2.6rem,6.4vw,6.4rem); --display-ls:-.035em; --display-lh:.92;
+  --display-transform:uppercase; --display-style:normal;
+  --label-font:"JetBrains Mono",monospace; --label-ls:.3em; --label-size:.66rem;
+  --rule:rgba(237,239,242,.14);
+}
+:root[data-dir="tungsten"]{
+  --bg:#0B0907; --fg:#EFE7DA; --muted:#8A7C6A; --accent:#D08A3E;
+  --scrim:radial-gradient(ellipse 70% 90% at 50% 55%,rgba(11,9,7,.82) 0%,rgba(11,9,7,.38) 55%,rgba(11,9,7,0) 100%);
+  --display-font:"Instrument Serif",serif; --display-weight:400;
+  --display-size:clamp(3rem,7.6vw,7.6rem); --display-ls:-.012em; --display-lh:1.0;
+  --display-transform:none; --display-style:normal;
+  --label-font:"Archivo",sans-serif; --label-ls:.26em; --label-size:.62rem;
+  --rule:rgba(239,231,218,.16);
+}
+:root[data-dir="mineral"]{
+  --bg:#000; --fg:#FFF; --muted:#8C99A6; --accent:#8C99A6;
+  --scrim:linear-gradient(180deg,rgba(0,0,0,.55) 0%,rgba(0,0,0,.1) 40%,rgba(0,0,0,.75) 100%);
+  --display-font:"Anton",sans-serif; --display-weight:400;
+  --display-size:clamp(4rem,15vw,15rem); --display-ls:.005em; --display-lh:.86;
+  --display-transform:uppercase; --display-style:normal;
+  --label-font:"Archivo",sans-serif; --label-ls:.34em; --label-size:.6rem;
+  --rule:rgba(255,255,255,.18);
+}
+
+html,body{height:100%}
+body{
+  background:var(--bg); color:var(--fg);
+  font-family:var(--label-font);
+  overflow-y:hidden; overflow-x:scroll;
+  transition:background .5s ease,color .5s ease;
+  scrollbar-width:none;
+}
+body::-webkit-scrollbar{display:none}
+
+/* the invisible runway that generates horizontal scroll distance */
+#spacer{width:760vw;height:100vh}
+
+/* ============ PINNED STAGE ============ */
+#stage{position:fixed;inset:0;overflow:hidden;background:var(--bg)}
+#film{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  will-change:transform;transition:filter .5s ease}
+:root[data-dir="tungsten"] #film{filter:saturate(.82) contrast(1.06) sepia(.14)}
+:root[data-dir="mineral"] #film{filter:grayscale(1) contrast(1.16)}
+:root[data-dir="apex"] #film{filter:saturate(.9) contrast(1.04)}
+#scrim{position:absolute;inset:0;background:var(--scrim);transition:background .5s ease;pointer-events:none}
+
+/* film not yet loaded */
+#fallback{position:absolute;inset:0;display:grid;place-items:center;
+  background:repeating-linear-gradient(115deg,#111 0 2px,#0a0a0a 2px 9px);
+  font:500 .7rem/1 var(--label-font);letter-spacing:.3em;color:var(--muted);text-transform:uppercase}
+#fallback[hidden]{display:none}
+
+/* ============ TEXT STATIONS ============ */
+#stations{position:absolute;inset:0;pointer-events:none}
+.station{position:absolute;inset:0;display:flex;opacity:0;will-change:opacity,transform}
+.station .inner{max-width:min(46rem,80vw)}
+.eyebrow{font:500 var(--label-size)/1 var(--label-font);letter-spacing:var(--label-ls);
+  text-transform:uppercase;color:var(--accent);margin-bottom:1.15rem;display:block}
+.headline{font-family:var(--display-font);font-weight:var(--display-weight);
+  font-size:var(--display-size);letter-spacing:var(--display-ls);line-height:var(--display-lh);
+  text-transform:var(--display-transform);font-style:var(--display-style)}
+.sub{margin-top:1.2rem;font:400 .82rem/1.65 var(--label-font);letter-spacing:.04em;
+  color:var(--muted);max-width:26rem}
+
+/* --- APEX: corner-anchored, hard clip reveal --- */
+:root[data-dir="apex"] .station{align-items:flex-end;justify-content:flex-start;
+  padding:0 0 12vh 7vw}
+:root[data-dir="apex"] .headline{clip-path:inset(0 var(--clip,100%) 0 0)}
+:root[data-dir="apex"] .sub{border-left:1px solid var(--rule);padding-left:1rem}
+
+/* --- TUNGSTEN: centred, composed into frame, soft + blur --- */
+:root[data-dir="tungsten"] .station{align-items:center;justify-content:center;
+  padding:0 8vw;text-align:center}
+:root[data-dir="tungsten"] .sub{margin-left:auto;margin-right:auto}
+:root[data-dir="tungsten"] .headline em{font-style:italic;color:var(--accent)}
+
+/* --- MINERAL: oversized type bleeding off both edges, counter-parallax --- */
+:root[data-dir="mineral"] .station{align-items:center;justify-content:flex-start;padding:0}
+:root[data-dir="mineral"] .station .inner{max-width:none;white-space:nowrap;padding-left:6vw}
+:root[data-dir="mineral"] .sub{white-space:normal;max-width:22rem}
+
+/* ============ CHROME ============ */
+#chrome{position:absolute;inset:0;pointer-events:none}
+.wordmark{position:absolute;top:2.6vh;left:7vw;font:600 .72rem/1 var(--label-font);
+  letter-spacing:.34em;text-transform:uppercase}
+:root[data-dir="tungsten"] .wordmark{font-family:var(--display-font);font-size:1.1rem;
+  letter-spacing:.06em;text-transform:none}
+.nav{position:absolute;top:2.6vh;right:7vw;display:flex;gap:1.6rem;
+  font:500 .62rem/1 var(--label-font);letter-spacing:.24em;text-transform:uppercase;color:var(--muted)}
+
+/* progress rail */
+#rail{position:absolute;left:7vw;right:7vw;bottom:4.2vh;height:1px;background:var(--rule)}
+#railFill{position:absolute;left:0;top:0;height:100%;width:0;background:var(--accent)}
+#railRead{position:absolute;bottom:calc(4.2vh + .8rem);right:7vw;
+  font:500 .6rem/1 var(--label-font);letter-spacing:.22em;color:var(--muted)}
+:root[data-dir="mineral"] #railRead{font-family:var(--display-font);font-size:2.6rem;
+  letter-spacing:0;color:var(--fg);bottom:calc(4.2vh + .6rem)}
+
+/* ============ CONTROL PANEL ============ */
+#panel{position:fixed;z-index:50;left:50%;transform:translateX(-50%);bottom:2.2vh;
+  display:flex;align-items:center;gap:1.4rem;padding:.7rem 1rem;
+  background:rgba(10,10,12,.82);backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,.12);border-radius:10px;
+  font:500 .64rem/1 "JetBrains Mono",monospace;letter-spacing:.1em;color:#E7E9EC}
+#panel .grp{display:flex;align-items:center;gap:.45rem}
+#panel .cap{color:#6B7280;text-transform:uppercase;letter-spacing:.18em;font-size:.56rem}
+#panel button{font:inherit;letter-spacing:.14em;text-transform:uppercase;
+  background:transparent;color:#8A9099;border:1px solid rgba(255,255,255,.16);
+  padding:.42rem .6rem;border-radius:5px;cursor:pointer;transition:all .18s}
+#panel button:hover{color:#fff;border-color:rgba(255,255,255,.4)}
+#panel button[aria-pressed="true"]{background:#fff;color:#08090A;border-color:#fff}
+#panel input[type=range]{width:104px;accent-color:#4DA3FF}
+#panel .val{color:#4DA3FF;min-width:2.6rem;text-align:right}
+#panel .sep{width:1px;height:22px;background:rgba(255,255,255,.14)}
+#hint{position:fixed;z-index:50;bottom:calc(2.2vh + 3.4rem);left:50%;transform:translateX(-50%);
+  font:500 .58rem/1 "JetBrains Mono",monospace;letter-spacing:.18em;color:#5A6069;
+  text-transform:uppercase;white-space:nowrap;transition:opacity .4s}
+#hint.gone{opacity:0}
+@media (max-width:900px){
+  #panel{gap:.8rem;padding:.6rem .7rem;font-size:.56rem}
+  #panel input[type=range]{width:64px}
+  #hint{display:none}
+}
+</style>
+</head>
+<body>
+
+<div id="spacer"></div>
+
+<div id="stage">
+  <video id="film" src="/video/wash-hero-scrub.mp4" muted playsinline preload="auto"></video>
+  <div id="fallback">film not loaded — run from the dev server</div>
+  <div id="scrim"></div>
+
+  <div id="stations"></div>
+
+  <div id="chrome">
+    <div class="wordmark" id="wordmark">APEX DETAIL</div>
+    <nav class="nav"><span>Work</span><span>Process</span><span>Book</span></nav>
+    <div id="railRead">00%</div>
+    <div id="rail"><div id="railFill"></div></div>
+  </div>
+</div>
+
+<div id="hint">scroll — trackpad, wheel or arrow keys</div>
+
+<div id="panel">
+  <div class="grp">
+    <span class="cap">Direction</span>
+    <button data-dir-btn="apex" aria-pressed="true">Apex</button>
+    <button data-dir-btn="tungsten" aria-pressed="false">Tungsten</button>
+    <button data-dir-btn="mineral" aria-pressed="false">Mineral</button>
+  </div>
+  <div class="sep"></div>
+  <div class="grp">
+    <span class="cap">Damping</span>
+    <input id="damp" type="range" min="3" max="100" value="9">
+    <span class="val" id="dampVal">0.09</span>
+  </div>
+  <div class="sep"></div>
+  <div class="grp">
+    <span class="cap">Pacing</span>
+    <button data-pace-btn="linear" aria-pressed="false">Linear</button>
+    <button data-pace-btn="cine" aria-pressed="true">Cinematic</button>
+  </div>
+</div>
+
+<script>
+const root = document.documentElement;
+const film = document.getElementById('film');
+const fallback = document.getElementById('fallback');
+const stationsEl = document.getElementById('stations');
+const railFill = document.getElementById('railFill');
+const railRead = document.getElementById('railRead');
+const wordmark = document.getElementById('wordmark');
+const hint = document.getElementById('hint');
+
+/* ---------- content: the six scroll stations ---------- */
+const STATIONS = [
+  {s:0.00,e:0.16,eyebrow:'Segment 01 — Arrival',  h:'It arrives<br>as it is',        sub:'No judgement. Just the before.'},
+  {s:0.16,e:0.34,eyebrow:'Segment 02 — Wheels',   h:'Where<br>it hides',              sub:'Brake dust, road film, winter brine.'},
+  {s:0.34,e:0.54,eyebrow:'Segment 03 — Foam',     h:'Under<br>the foam',              sub:'pH-neutral. Zero contact. Zero swirl.'},
+  {s:0.54,e:0.70,eyebrow:'Segment 04 — Rinse',    h:'Stripped<br>to paint',           sub:'Every panel sheeted clean.'},
+  {s:0.70,e:0.86,eyebrow:'Segment 05 — Cabin',    h:'Inside<br>the quiet',            sub:'Glass, leather, vents, seams.'},
+  {s:0.86,e:1.00,eyebrow:'Segment 06 — Reveal',   h:'It leaves<br><em>transformed</em>', sub:'Book the detail.'}
+];
+
+const WORDMARKS = {apex:'APEX DETAIL', tungsten:'Andrew &amp; Co.', mineral:'MINERAL'};
+
+const nodes = STATIONS.map(st=>{
+  const d = document.createElement('div');
+  d.className = 'station';
+  d.innerHTML = `<div class="inner">
+      <span class="eyebrow">${st.eyebrow}</span>
+      <div class="headline">${st.h}</div>
+      <p class="sub">${st.sub}</p>
+    </div>`;
+  stationsEl.appendChild(d);
+  return d;
+});
+
+/* ---------- scroll → progress ---------- */
+let target = 0, current = 0, damping = 0.09, pacing = 'cine';
+
+function maxScroll(){ return Math.max(1, document.body.scrollWidth - window.innerWidth); }
+function readScroll(){ target = Math.min(1, Math.max(0, window.scrollX / maxScroll())); }
+
+window.addEventListener('scroll', readScroll, {passive:true});
+window.addEventListener('resize', readScroll);
+
+/* vertical wheel drives horizontal advance, so a normal trackpad works */
+window.addEventListener('wheel', e=>{
+  if (e.target.closest('#panel')) return;
+  if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+    e.preventDefault();
+    window.scrollBy({left:e.deltaY, behavior:'instant'});
+  }
+}, {passive:false});
+
+window.addEventListener('keydown', e=>{
+  const step = window.innerWidth * 0.5;
+  if (e.key==='ArrowRight'||e.key==='ArrowDown') { window.scrollBy({left:step}); e.preventDefault(); }
+  if (e.key==='ArrowLeft' ||e.key==='ArrowUp')   { window.scrollBy({left:-step}); e.preventDefault(); }
+  if (e.key==='1') setDir('apex');
+  if (e.key==='2') setDir('tungsten');
+  if (e.key==='3') setDir('mineral');
+});
+
+let hintHidden = false;
+window.addEventListener('scroll', ()=>{
+  if (!hintHidden && window.scrollX > 40){ hint.classList.add('gone'); hintHidden = true; }
+}, {passive:true, once:false});
+
+/* ---------- easing ---------- */
+// smootherstep: slow hold at the open, acceleration through the middle, settle at the payoff
+const smootherstep = t => t*t*t*(t*(t*6-15)+10);
+const pace = t => pacing==='cine' ? smootherstep(t) : t;
+
+const clamp01 = v => v<0?0:v>1?1:v;
+
+/* ---------- render loop ---------- */
+let ready = false;
+let lastSeek = -1;
+
+function step(){
+  current += (target - current) * damping;
+  if (Math.abs(target - current) < 0.00005) current = target;
+}
+
+function apply(){
+  const p = pace(clamp01(current));
+
+  if (ready && film.duration) {
+    // clamp just inside the end so the last frame stays decodable
+    const t = p * (film.duration - 0.02);
+    if (Math.abs(t - lastSeek) > 0.004) { film.currentTime = t; lastSeek = t; }
+  }
+
+  railFill.style.width = (p*100).toFixed(2) + '%';
+  railRead.textContent = String(Math.round(p*100)).padStart(2,'0') + '%';
+
+  const dir = root.dataset.dir;
+  for (let i=0;i<nodes.length;i++){
+    const st = STATIONS[i], el = nodes[i];
+    const span = st.e - st.s;
+    const lt = clamp01((p - st.s) / span);         // 0..1 within this station
+    // first station is already up on arrival; last one holds through the end card
+    const inFade  = i === 0 ? 1 : clamp01(lt / 0.20);
+    const outFade = i === nodes.length - 1 ? 1 : clamp01((1 - lt) / 0.20);
+    const vis = Math.min(inFade, outFade);
+    const live = p >= st.s - 0.02 && p <= st.e + 0.02;
+
+    el.style.opacity = live ? vis.toFixed(3) : '0';
+    if (!live) continue;
+
+    if (dir === 'apex'){
+      // hard clip-wipe from the left, locked position
+      el.querySelector('.headline').style.setProperty('--clip', ((1-inFade)*100).toFixed(1)+'%');
+      el.style.transform = 'none';
+    } else if (dir === 'tungsten'){
+      // soft focus-in, gentle upward drift — composed into the shot
+      const drift = (1 - vis) * 16;
+      el.style.transform = `translate3d(0,${drift.toFixed(2)}px,0)`;
+      el.style.filter = `blur(${((1-inFade)*7).toFixed(2)}px)`;
+    } else {
+      // oversized type sliding counter to the scroll direction
+      const shift = (0.5 - lt) * 42;
+      el.style.transform = `translate3d(${shift.toFixed(2)}vw,0,0)`;
+    }
+  }
+}
+
+function frame(){ step(); apply(); requestAnimationFrame(frame); }
+
+/* rAF is suspended while the tab is hidden, so state goes stale.
+   On return, snap to the real scroll position instead of animating from a stale one. */
+document.addEventListener('visibilitychange', ()=>{
+  if (!document.hidden){ readScroll(); current = target; apply(); }
+});
+
+/* debug hook so the loop can be driven deterministically without rAF */
+window.__lab = {
+  step, apply,
+  settle(n=240){ for(let i=0;i<n;i++) step(); apply(); },
+  state:()=>({target, current, damping, pacing, ready, lastSeek})
+};
+
+/* ---------- video priming ---------- */
+film.addEventListener('loadeddata', ()=>{
+  fallback.hidden = true;
+  // a play/pause cycle makes seeking reliable across browsers
+  film.play().then(()=>{ film.pause(); film.currentTime = 0; ready = true; })
+             .catch(()=>{ film.currentTime = 0; ready = true; });
+});
+film.addEventListener('error', ()=>{
+  fallback.hidden = false;
+  fallback.textContent = 'film missing — serve this page from npm run dev';
+});
+
+/* ---------- controls ---------- */
+function setDir(d){
+  root.dataset.dir = d;
+  wordmark.innerHTML = WORDMARKS[d];
+  document.querySelectorAll('[data-dir-btn]').forEach(b=>
+    b.setAttribute('aria-pressed', String(b.dataset.dirBtn === d)));
+  nodes.forEach(n=>{ n.style.filter=''; n.style.transform=''; });
+}
+document.querySelectorAll('[data-dir-btn]').forEach(b=>
+  b.addEventListener('click', ()=>setDir(b.dataset.dirBtn)));
+
+document.querySelectorAll('[data-pace-btn]').forEach(b=>
+  b.addEventListener('click', ()=>{
+    pacing = b.dataset.paceBtn;
+    document.querySelectorAll('[data-pace-btn]').forEach(x=>
+      x.setAttribute('aria-pressed', String(x.dataset.paceBtn === pacing)));
+  }));
+
+const dampEl = document.getElementById('damp'), dampVal = document.getElementById('dampVal');
+dampEl.addEventListener('input', ()=>{
+  damping = Number(dampEl.value)/100;
+  dampVal.textContent = damping.toFixed(2);
+});
+
+readScroll();
+current = target;
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
