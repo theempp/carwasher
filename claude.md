@@ -3,6 +3,13 @@
 > Canonical source of truth. Every tool (Claude, Cursor, Google Antigravity) reads THIS file first.
 > The original long-form vision is preserved at `docs/ORIGINAL_BRIEF.md`.
 
+> ⚠️ **UPDATE 2026-09-08 — film direction & site look RE-LOCKED.** The film is now ONE seamless
+> **continuous take** with **HORIZONTAL scroll** (car drives right, dirty→spotless), moody/cinematic,
+> built as **chained video segments** — see `docs/FILM_PIPELINE.md` (authoritative for the film).
+> This supersedes the "12 stills / vertical frame-by-frame / 8-scene cut" framing and the
+> vertical `sceneTimeline` below. The **site is also being re-designed** (new font, new colors, new
+> look); the palette/typography in §4 will be replaced once the owner confirms the new direction.
+
 ---
 
 ## 1. Concept (one line)
