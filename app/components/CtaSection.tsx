@@ -17,15 +17,15 @@ export function CtaSection() {
         viewport={{ once: true, amount: 0.4 }}
         transition={{ duration: 0.85, ease }}
       >
-        <p className="type-label text-muted">Book</p>
+        <p className="type-label text-muted">Booking</p>
         <h2 className="type-display mt-6 max-w-[12ch] text-[length:var(--display-size)]">
           Request a time.
         </h2>
         <a
           href={BOOKING_HREF}
-          className="type-label mt-10 inline-flex w-fit text-ink transition-colors duration-300 hover:text-muted"
+          className="type-label mt-10 inline-flex w-fit border-b border-rule pb-2 text-ink transition-colors duration-300 hover:text-muted"
         >
-          Book
+          Book a time
         </a>
       </motion.div>
     </section>

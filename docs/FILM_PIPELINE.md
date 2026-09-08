@@ -12,6 +12,15 @@
 > types GO. Do not wire anything past clip 1 until they say so. Do not overwrite
 > clip 1 or signed clip 2 files.
 
+> ⚠️ **UPDATE 2026-09-08 (evening) — the site now serves the 25.33s full-film trim.**
+> The hero is `public/video/lambo-wash-full-scrub-take1-trim.mp4` (608 frames, 24fps, all-intra),
+> the signed trim of full-film take 1 cut one frame before the hard cut at 25.33s. Clip 1, clip 2
+> and both remainder takes stay on disk and are **not served**. Poster / arrival still is
+> `public/images/lambo-wash-full-start.jpg`; the comparison's second frame is
+> `public/images/lambo-wash-full-trim-last.jpg` (extracted frame 607 — wet gloss black, near door
+> flush). Sentences below that say "serve clip 1 only" or "do not wire anything past clip 1"
+> describe the state before that trim was signed.
+
 ---
 
 ## 1. LOCKED DIRECTION (v3 — supersedes the old wash-bay continuous-take plan)

@@ -7,6 +7,7 @@ import { FrameScrubber } from "@/app/components/experience/FrameScrubber";
 import { LoadingScreen } from "@/app/components/experience/LoadingScreen";
 import { SceneOverlay } from "@/app/components/experience/SceneOverlay";
 import { VideoScrubber } from "@/app/components/experience/VideoScrubber";
+import { FILM } from "@/lib/scene/sceneTimeline";
 import { useScrollProgress } from "@/lib/utils/useScrollProgress";
 
 type MediaMode = "video" | "stills" | "placeholder";
@@ -51,10 +52,16 @@ export function CinematicStage() {
 
       {mode === "placeholder" ? <FilmPlaceholder /> : null}
 
-      <div className="film-scrim pointer-events-none absolute inset-0 z-10" />
-      <SceneOverlay progress={progress} />
+      {/* Station copy is composed into the shot — with no shot, only the
+          placeholder speaks. */}
+      {mode === "placeholder" ? null : (
+        <>
+          <div className="film-scrim pointer-events-none absolute inset-0 z-10" />
+          <SceneOverlay progress={progress} />
+          <ScrollProgress progress={progress} />
+        </>
+      )}
       <Navigation />
-      <ScrollProgress progress={progress} />
       <LoadingScreen visible={!ready && mode !== "placeholder"} />
     </section>
   );
@@ -70,11 +77,8 @@ function FilmPlaceholder() {
         </p>
         <p className="mt-6 max-w-[26rem] text-[0.8rem] leading-relaxed tracking-[0.04em] text-muted">
           Missing{" "}
-          <span className="text-panel-fg">
-            public/video/lambo-wash-01-scrub.mp4
-          </span>{" "}
-          and the arrival / full-coverage stills. Nothing here is a stand-in for
-          footage.
+          <span className="text-panel-fg">public{FILM.scrub}</span> and the
+          arrival / last-frame stills. Nothing here is a stand-in for footage.
         </p>
       </div>
     </div>

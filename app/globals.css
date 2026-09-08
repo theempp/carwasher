@@ -16,6 +16,14 @@
   --label-ls: 0.34em;
   --label-size: 0.6rem;
   --label-weight: 600;
+  /* Soft pool of shade under the station type only, so the serif reads over
+     the bright villa/sky without veiling the car (which sits centre-right). */
+  --film-scrim-type: radial-gradient(
+    68% 58% at 14% 44%,
+    rgba(0, 0, 0, 0.52) 0%,
+    rgba(0, 0, 0, 0.24) 46%,
+    rgba(0, 0, 0, 0) 78%
+  );
   --film-scrim: linear-gradient(
     180deg,
     rgba(0, 0, 0, 0.35) 0%,
@@ -79,6 +87,40 @@ body {
   filter: contrast(1.04) saturate(1.05);
 }
 
+/*
+ * Landscape: full-bleed. Portrait: a 16:9 locked shot cropped to a phone's
+ * aspect throws away most of the car, so letterbox on --ink instead and keep
+ * the framing the film was shot with.
+ */
+.film-fit {
+  object-fit: cover;
+}
+
+@media (max-aspect-ratio: 1 / 1) {
+  .film-fit {
+    object-fit: contain;
+    /* sit the band high enough to leave the lower third to the station copy */
+    object-position: 50% 32%;
+  }
+}
+
 .film-scrim {
   background: var(--film-scrim);
+}
+
+.film-scrim-type {
+  background: var(--film-scrim-type);
+}
+
+/* Portrait moves the station copy under the letterboxed film, so the shade
+   pool follows it down rather than sitting over the frame. */
+@media (max-aspect-ratio: 1 / 1) {
+  .film-scrim-type {
+    background: radial-gradient(
+      120% 42% at 30% 82%,
+      rgba(0, 0, 0, 0.5) 0%,
+      rgba(0, 0, 0, 0.22) 50%,
+      rgba(0, 0, 0, 0) 82%
+    );
+  }
 }

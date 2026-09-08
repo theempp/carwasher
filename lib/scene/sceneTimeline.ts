@@ -1,13 +1,26 @@
 export const DAMPING = 0.09;
 
-/** Vertical pin runway in viewport-heights. 5.04s clip; tune here only. */
-export const PIN_RUNWAY_VH = 5;
+/**
+ * Vertical pin runway in viewport-heights. Single tuning knob for pacing.
+ * Clip 1 (5.04s) used 5. The 25.33s film at that density would crawl, so the
+ * runway is far denser per second — the film should feel somewhat fast.
+ * Tune here only; nothing else reads scroll distance.
+ */
+export const PIN_RUNWAY_VH = 13;
 
 export const FILM = {
-  /** All-intra encode — the only file the <video> may request. */
-  scrub: "/video/lambo-wash-01-scrub.mp4",
-  first: "/images/lambo-wash-01-first.jpg",
-  last: "/images/lambo-wash-01-last.jpg",
+  /**
+   * All-intra encode of the signed 25.33s trim (608 frames, 24fps, every frame
+   * a keyframe). The only file the <video> may request. Do not re-encode.
+   * The untrimmed 30s take has a hard cut at 25.33s — it is not served.
+   */
+  scrub: "/video/lambo-wash-full-scrub-take1-trim.mp4",
+  /** Poster + arrival still: the frame the film opens on. */
+  first: "/images/lambo-wash-full-start.jpg",
+  /** Last frame of the trim: wet gloss black, near door flush. Not a reveal. */
+  last: "/images/lambo-wash-full-trim-last.jpg",
+  /** Seconds. Kept for reference only — playback reads video.duration. */
+  duration: 25.333,
 } as const;
 
 export type Station = {
@@ -24,14 +37,23 @@ export type Station = {
 };
 
 /**
- * Pinned-phase stations. Station 1's range extends through 1.0 so its label
- * holds into the trust panel (SCROLL_MECHANICS §3 trap 2 / §6 station 2).
+ * Pinned-phase stations, one per beat that is actually readable in the
+ * 25.33s trim (clip-time / 25.333):
+ *   0.00–7.00   foam       → .000–.276
+ *   7.00–13.00  rinse      → .276–.513
+ *   13.00–15.00 near door  → .513–.592
+ *   15.00–23.00 interior   → .592–.908
+ *   23.00–25.33 exit/slam  → .908–1.000
+ * Foam is split into arrival + wash so station 0 can open at full opacity and
+ * clear the frame before the car is buried; the door label runs a little past
+ * the door beat so it is readable rather than a blink.
+ * Copy is placeholder — the owner has not signed the words.
  */
 export const stations = [
   {
     id: 0,
     start: 0,
-    end: 0.3,
+    end: 0.075,
     holdOpen: true,
     holdClose: false,
     eyebrow: "Arrival",
@@ -40,13 +62,53 @@ export const stations = [
   },
   {
     id: 1,
-    start: 0.3,
+    start: 0.075,
+    end: 0.276,
+    holdOpen: false,
+    holdClose: false,
+    eyebrow: "The wash",
+    headline: ["Foam, panel", "by panel"],
+    sub: "Hand-sprayed across every side of the car.",
+  },
+  {
+    id: 2,
+    start: 0.276,
+    end: 0.513,
+    holdOpen: false,
+    holdClose: false,
+    eyebrow: "The rinse",
+    headline: ["Stripped back", "to wet black"],
+    sub: "Every panel carried down to the paint again.",
+  },
+  {
+    id: 3,
+    start: 0.513,
+    end: 0.66,
+    holdOpen: false,
+    holdClose: false,
+    eyebrow: "The door",
+    headline: ["One way in,", "the near door"],
+    sub: "The far side stays shut.",
+  },
+  {
+    id: 4,
+    start: 0.66,
+    end: 0.908,
+    holdOpen: false,
+    holdClose: false,
+    eyebrow: "Inside",
+    headline: ["Mat, seats,", "wheel, console"],
+    sub: "One part at a time. Nothing else enters the frame.",
+  },
+  {
+    id: 5,
+    start: 0.908,
     end: 1,
     holdOpen: false,
     holdClose: true,
-    eyebrow: "The wash",
-    headline: ["Watch it", "disappear"],
-    sub: "Foam builds, panel by panel.",
+    eyebrow: "The close",
+    headline: ["We back out", "and close up"],
+    sub: "Same driveway, same light, door flush.",
   },
 ] as const satisfies readonly Station[];
 
@@ -59,6 +121,7 @@ export function stationOpacity(progress: number, station: Station): number {
   if (span <= 0) return 0;
 
   const local = (progress - station.start) / span;
+
   const inFade = station.holdOpen ? 1 : clamp01(local / STATION_CROSSFADE);
   const outFade = station.holdClose
     ? 1

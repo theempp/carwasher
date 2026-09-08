@@ -96,6 +96,14 @@ Clip 2 is signed (frozen rinse) and not wired. Remainder camera is a **drone** �
 
 ## 6. Station map (pinned phase only)
 
+> **Superseded 2026-09-08 (evening).** The table below described the 5.04s clip-1 hero. The pinned
+> phase is now the 25.33s full-film trim, and the stations live in `lib/scene/sceneTimeline.ts` —
+> that file is the single source, this table is kept only as the shape of the thing.
+> Current stations, keyed to film progress (clip-time / 25.333):
+> arrival `.000–.075` · the wash `.075–.276` · the rinse `.276–.513` · the door `.513–.660` ·
+> inside `.660–.908` · the close `.908–1.000` (holds through release).
+> `PIN_RUNWAY_VH` is **13** — 25s at clip 1's density crawled.
+
 The pinned phase is one continuous clip, not eight invented beats like v2 — station count matches
 what's actually visible in a 5-second clip:
 
@@ -106,10 +114,8 @@ what's actually visible in a 5-second clip:
 | 2 | .75–1.0 | (holds, no new label — carries into Trust panel on release) | | |
 
 Copy is a working draft — the owner has not signed off on final words. Keep station 0 at full opacity
-on load (Trap 2, §3) and let station 1's label persist through release rather than fading out right
-before the pin ends.
-
----
+on load (Trap 2, §3) and let the last station's label persist through release rather than fading out
+right before the pin ends.
 
 ## 7. Reference implementation
 

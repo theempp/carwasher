@@ -105,24 +105,34 @@ scroll-reveals everywhere. **Scroll damping is mandatory — see `docs/SCROLL_ME
 
 The experience is now **two phases**, not one long multi-beat film:
 
-1. **Pinned hero scrub (vertical, ~0–85% of the runway)** — today: one static-camera clip,
-   `public/video/lambo-wash-01-scrub.mp4`, arrival → full foam. Clip 2 (frozen rinse) is **signed,
-   not wired**. Remainder **take 2 is unsigned** on disk; the retake brief is
-   `docs/REMAINDER_BRIEF.md`. Wax is not in the film.
-2. **Normal scroll flow (released, ~85–100%)** — Trust panel ("THE BEST IN [REGION]." + reviews) →
+1. **Pinned hero scrub (vertical, ~0–85% of the runway)** — since 2026-09-08 (evening) the hero is
+   the signed **25.33s full-film trim**, `public/video/lambo-wash-full-scrub-take1-trim.mp4`:
+   foam → rinse → in through the near door → interior → back out and the door closes flush.
+   `PIN_RUNWAY_VH = 13`. Clip 1, clip 2 and both remainder takes stay on disk and are no longer
+   served. Wax is not in the film.
+2. **Normal scroll flow (released, ~85–100%)** — Trust panel ("THE STANDARD ON YOUR STREET." — placeholder copy) →
    Before/After comparison → BOOK CTA. These are ordinary stacked sections, not pinned.
 
-This is a deliberate simplification from v2's eight-beat wash-bay-to-departure narrative: one real
-clip on the site now; clip 2 is signed on disk; the remainder chains onto the same pin when the
-owner signs and wires it.
+This is a deliberate simplification from v2's eight-beat wash-bay-to-departure narrative: one
+continuous drone take carries the whole wash, and anything added later chains onto the same pin
+rather than becoming a new page section.
 
 ---
 
 ## 6. Media Assets
 
 ```
+public/video/lambo-wash-full-scrub-take1-trim.mp4  25.33s all-intra trim (608 frames) — SERVE THIS to <video>
+public/images/lambo-wash-full-start.jpg            poster + ARRIVAL comparison still
+public/images/lambo-wash-full-trim-last.jpg        frame 607 — wet gloss black, near door flush (comparison)
+public/video/lambo-wash-full-take1-trim.mp4        raw trim — DO NOT serve
+public/video/lambo-wash-full-take1.mp4             original 30s take — hard cut at 25.33s, DO NOT serve
+public/video/lambo-wash-full-scrub-take1.mp4       30s all-intra — includes the hard cut, DO NOT serve
+public/images/lambo-wash-full-hold-take1.jpg       from the discarded 30s tail — DO NOT use
+public/images/lambo-wash-full-last-take1.jpg       from the discarded 30s tail — DO NOT use
+
 public/video/lambo-wash-01.mp4         raw owner clip (5.04s, 24fps, 1280x720, 1 keyframe — DO NOT serve this)
-public/video/lambo-wash-01-scrub.mp4   all-intra re-encode (120/121 keyframes) — SERVE THIS to <video>
+public/video/lambo-wash-01-scrub.mp4   all-intra re-encode — former hero, keep on disk, no longer served
 public/images/lambo-wash-01-first.jpg  first frame still — poster image / "before" fallback
 public/images/lambo-wash-01-last.jpg   last frame still — "after" fallback until the remainder’s
                                         front hold exists (see docs/FILM_PIPELINE.md §5)
@@ -137,13 +147,14 @@ public/images/lambo-wash-03-hold-take2.jpg      take 2 front portrait — compar
 public/images/lambo-wash-03-last-take2.jpg      take 2 last frame — overhead, car already gone
 ```
 
-- Never invent a media path. If `lambo-wash-01-scrub.mp4` is missing, `<CinematicStage>` must fall
+- Never invent a media path. If `lambo-wash-full-scrub-take1-trim.mp4` is missing, `<CinematicStage>` must fall
   back to the still frames, and if those are missing too, render a clearly-labeled placeholder — same
   rule as v1/v2, unchanged.
 - Generated continuation is specified in `docs/FILM_PIPELINE.md` §5 and `docs/REMAINDER_BRIEF.md`:
   clip 2 signed / not wired; remainder take 2 unsigned (designer said all right; two tweaks next).
-  Do not fake rinse, interior, or front-reveal frames on the site. Comparison stays ARRIVAL /
-  FULL COVERAGE until a signed `lambo-wash-03-hold.jpg` exists.
+  Do not fake rinse, interior, or front-reveal frames on the site. The comparison is the trim's own
+  first and last frames, labelled ARRIVAL / RINSED, DOOR CLOSED — never "after", "spotless",
+  "finished" or "clean reveal", because the last frame is a wet car, not a dried one.
 
 ---
 

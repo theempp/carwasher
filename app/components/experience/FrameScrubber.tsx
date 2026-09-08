@@ -58,14 +58,14 @@ export function FrameScrubber({
         alt=""
         fill
         sizes="100vw"
-        className="object-cover"
+        className="film-fit"
       />
       <Image
         src={FILM.last}
         alt=""
         fill
         sizes="100vw"
-        className="object-cover"
+        className="film-fit"
         style={{ opacity: coverage }}
       />
     </div>

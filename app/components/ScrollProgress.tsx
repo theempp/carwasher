@@ -15,7 +15,7 @@ export function ScrollProgress({ progress }: ScrollProgressProps) {
       aria-valuemax={100}
       aria-label="Film progress"
     >
-      <p className="type-label absolute right-0 bottom-[0.7rem] text-muted">
+      <p className="type-label absolute right-0 bottom-[0.7rem] text-panel-fg/65">
         {String(percent).padStart(2, "0")}
       </p>
       <div className="relative h-px w-full bg-rule-inv">
