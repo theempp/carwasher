@@ -1,18 +1,18 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { Cormorant_Garamond, IBM_Plex_Mono } from "next/font/google";
+import { DM_Mono, Syne } from "next/font/google";
 import "./globals.css";
 
-const editorial = Cormorant_Garamond({
+const syne = Syne({
   subsets: ["latin"],
-  weight: ["300", "400", "500"],
-  variable: "--font-editorial",
+  weight: ["700", "800"],
+  variable: "--font-syne",
 });
 
-const plex = IBM_Plex_Mono({
+const dmMono = DM_Mono({
   subsets: ["latin"],
   weight: ["400"],
-  variable: "--font-plex",
+  variable: "--font-dm-mono",
 });
 
 export const metadata: Metadata = {
@@ -28,9 +28,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${editorial.variable} ${plex.variable} h-full antialiased`}
+      className={`${syne.variable} ${dmMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-ink text-foam">{children}</body>
+      <body className="min-h-full bg-ink text-bone">{children}</body>
     </html>
   );
 }

@@ -28,15 +28,12 @@ export function CtaSection({ progress }: CtaSectionProps) {
       aria-hidden={!interactive}
     >
       <div className="px-6 text-center">
-        <p className="mb-6 font-mono text-[10px] tracking-[0.4em] text-mist uppercase">
-          08  /  sky
-        </p>
-        <h2 className="font-display text-[clamp(3.4rem,10vw,9rem)] leading-[0.88] font-light tracking-[0.08em] text-foam">
+        <h2 className="font-display mx-auto max-w-[11ch] text-[clamp(2.4rem,6.2vw,5.25rem)] leading-[0.9] font-extrabold tracking-[-0.04em] text-bone">
           {sky.label}
         </h2>
         <a
           href={BOOKING_HREF}
-          className="mt-10 inline-block font-mono text-[11px] tracking-[0.36em] text-accent uppercase underline decoration-accent/40 underline-offset-8 transition-colors duration-300 hover:text-foam hover:decoration-foam"
+          className="mt-8 inline-block font-mono text-[10px] tracking-[0.36em] text-amber uppercase underline decoration-amber decoration-1 underline-offset-[10px] transition-colors duration-300 hover:text-bone hover:decoration-bone"
         >
           Reserve a time
         </a>

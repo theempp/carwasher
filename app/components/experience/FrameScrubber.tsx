@@ -62,27 +62,16 @@ function drawPlaceholder(
   progress: number,
 ) {
   const scene = getSceneAtProgress(progress);
-  const gradient = ctx.createLinearGradient(0, 0, width * 0.15, height);
-  gradient.addColorStop(0, "#0b1424");
-  gradient.addColorStop(0.55, "#07090f");
-  gradient.addColorStop(1, "#050508");
-  ctx.fillStyle = gradient;
+  ctx.fillStyle = "#08090B";
   ctx.fillRect(0, 0, width, height);
 
-  const beam = ctx.createLinearGradient(0, height * 0.35, width, height * 0.55);
-  beam.addColorStop(0, "rgba(243, 241, 236, 0)");
-  beam.addColorStop(0.45, "rgba(243, 241, 236, 0.06)");
-  beam.addColorStop(1, "rgba(243, 241, 236, 0)");
-  ctx.fillStyle = beam;
-  ctx.fillRect(0, height * 0.38, width, height * 0.16);
-
-  ctx.fillStyle = "#9b9ea8";
-  ctx.font = "400 11px 'IBM Plex Mono', ui-monospace, monospace";
+  ctx.fillStyle = "#8E8A82";
+  ctx.font = "400 11px 'DM Mono', ui-monospace, monospace";
   ctx.textAlign = "center";
   ctx.fillText("FRAME UNAVAILABLE", width / 2, height * 0.22);
 
-  ctx.fillStyle = "#f3f1ec";
-  ctx.font = "300 22px 'Cormorant Garamond', Georgia, serif";
+  ctx.fillStyle = "#EDE6D6";
+  ctx.font = "800 22px Syne, ui-sans-serif, sans-serif";
   ctx.fillText(scene.label, width / 2, height * 0.26);
 }
 
