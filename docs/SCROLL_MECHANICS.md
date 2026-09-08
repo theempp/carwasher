@@ -83,10 +83,13 @@ as an ordinary vertical scroll into the Trust panel and Before/After section
 regular content with restrained scroll-triggered fade/translate-in, same motion vocabulary, much
 simpler mechanics (no video, no damping needed).
 
-**When clip 2 (rinse/reveal) exists:** it belongs on this same pinned stage, not as a new page
-section. Extend `PIN_RUNWAY_VH` so ~10s of film still feels deliberate; add a rinse station; keep
-Trust / comparison / BOOK after the pin. Do not generate clip 2 until the owner says go — see
-`docs/FILM_PIPELINE.md` §5.
+**When clip 2 + the remainder exist:** they belong on this same pinned stage, not as new page
+sections. Extend `PIN_RUNWAY_VH` so the full film still feels deliberate; add stations that match
+real beats (rinse / far-door interior / front hold); keep Trust / comparison / BOOK after the pin.
+Generate and wire only when the owner says so — see `docs/FILM_PIPELINE.md` §5. Clip 1 on the site
+stays static. Clip 2 is signed (frozen rinse) and not wired. Camera motion in the remainder is
+motivated (a wash step, a part, a process) — never empty coverage (`docs/FILM_PIPELINE.md` §4
+camera law).
 
 ---
 
