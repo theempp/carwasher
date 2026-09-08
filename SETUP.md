@@ -1,6 +1,8 @@
-# SETUP — Build the Site with Claude + Cursor/Antigravity + Nano Banana Pro 2
+# SETUP — Build the Site with Cursor + Nano Banana Pro 2
 
 Read this with `claude.md` (the master brief). This is the *how*. Short and in order.
+
+**Backend setup status: ✅ COMPLETE (verified 2026-09-08).** Section 1 is done. Start at Section 2.
 
 ---
 
@@ -8,29 +10,40 @@ Read this with `claude.md` (the master brief). This is the *how*. Short and in o
 
 Three jobs, three tools. Don't overcomplicate it:
 
-- **Claude** wrote the plan (`claude.md`) and the one-shot kickoff prompt (below). Done.
-- **Nano Banana Pro 2** = your image/frame factory. It makes the *pictures* of the car through the wash. It does **not** make video, and it does **not** write the website. Its superpower here: it keeps the SAME car consistent across every frame — that's exactly what an image-sequence needs.
-- **Cursor OR Antigravity** = the builder. An AI IDE agent that scaffolds and edits the Next.js app. **They do the same job — pick ONE as primary.** Running both agents on the same repo at once just creates conflicts.
+- **Claude** wrote the plan (`claude.md`) and the one-shot kickoff prompt (`KICKOFF_PROMPT.md`), and set up the toolchain. Done.
+- **Nano Banana Pro 2** = your image/frame factory. It makes the *pictures* of the car through the wash. It does **not** make video, and it does **not** write the website. Its superpower here: it keeps the SAME car consistent across every frame — exactly what an image-sequence needs.
+- **Cursor** = the builder. An AI IDE agent that scaffolds and edits the Next.js app.
 
-> The website is NOT a video. It's a numbered pile of still frames that a canvas flips through as you scroll (how Apple does it). That's why an image model is enough to get a great rough draft.
+> The website is NOT a video. It's a numbered pile of still frames that a canvas flips through as you scroll (how Apple does it). That's why an image model is enough for a great rough draft.
 
-**Recommended primary:** Cursor (mature, Claude-native, applies precise diffs).
-**Antigravity's edge:** its agent can open the running site in a browser and self-verify visually — great as the "does it actually look right?" second pass. Optional.
+**Primary builder: Cursor.** (Google Antigravity does the same job — pick ONE. Running both agents on the same repo creates conflicts.)
 
 ---
 
-## 1. One-time installs
+## 1. Environment — ✅ ALL VERIFIED, NOTHING TO DO
 
-1. **Node.js** (LTS) + **Git** — `node -v` should print v18+.
-2. **Cursor** — cursor.com. Sign in, set the model to a Claude model.
-   *(or)* **Google Antigravity** — install, sign in with Google, it runs on Gemini 3.
-3. **Nano Banana Pro 2 access** — Google **Gemini app** or **AI Studio** (aistudio.google.com). Select the Nano Banana Pro / Gemini 3 Pro Image model. No API key needed for the manual path.
+| Thing | Status |
+|---|---|
+| Node.js v26.8.1 / npm 11.19.0 | ✅ installed (Homebrew) |
+| Git 2.55.0 | ✅ installed |
+| `gsap-skills` plugin (user scope) | ✅ enabled — core, scrolltrigger, timeline, plugins, react, performance, utils |
+| Magic UI MCP (`magic`, user scope) | ✅ connected — no key needed |
+| 21st Magic MCP (`21st`, user scope) | ✅ connected — HTTP, keyed |
+| Figma MCP | ✅ connected, signed in as enzo marin |
+| Vercel MCP | ✅ connected (for the deploy in §5) |
+| `public/frames/` | ✅ created, ready for drops |
+| Cursor | ⬜ **YOU** — see §3 |
+
+**Figma caveat:** the seat is **View** on "enzo marin's team" (starter tier). Reading/inspecting Figma designs works; writing designs *back into* Figma may be refused. Not a blocker for this build.
+
+**Nano Banana Pro 2 access — MANUAL path (chosen).** Use the Google **Gemini app** or **AI Studio** (aistudio.google.com), select the Nano Banana Pro / Gemini 3 Pro Image model. **No API key, no `.env.local`, nothing to configure.**
 
 ---
 
 ## 2. Make the frames (Nano Banana Pro 2)
 
 Goal for the rough draft: **~12 frames**, one per beat, SAME Mineral Grey F80 M3 every time.
+Drop them in **`public/frames/`** — the folder already exists and documents the naming rule.
 
 1. Open the reference `Photo Sep 07 2026, 10 17 30 PM.jpg`, and generate **frame 1** with this seed prompt:
 
@@ -46,26 +59,27 @@ Goal for the rough draft: **~12 frames**, one per beat, SAME Mineral Grey F80 M3
    - rear three-quarter, car driving away, motion in the water
    - car small, driving toward a bright soft-cloud opening
 
-3. Download each as `frame-0001.jpg … frame-0012.jpg` (uniform size). Drop them in `public/frames/`.
+3. Download each as `frame-0001.jpg … frame-0012.jpg`. **Zero-padded, uniform dimensions, 16:9.** Drop into `public/frames/`.
 
 *You can start building BEFORE the frames exist — the site renders labeled placeholders until you add them.*
 
 ---
 
-## 3. Build the site (Cursor or Antigravity) — ONE prompt
+## 3. Build the site (Cursor) — ONE prompt
 
-1. Open this folder (`AndrewWebsite`) in Cursor/Antigravity.
-2. Open the agent panel (Cursor: Cmd-I / Composer in Agent mode).
-3. Paste the **Kickoff Prompt** from `KICKOFF_PROMPT.md` (also printed in chat). Send it once.
-4. Let the agent scaffold, build, and start the dev server. It reads `claude.md`, builds the scrubber, and reports.
-5. Open `http://localhost:3000` and scroll.
+1. Cursor → **File › Open Folder** → `/Users/zozo/Desktop/AndrewWebsite`
+2. Press **Cmd+I** to open Composer, set the mode to **Agent**
+3. In the model picker, choose a **Claude** model (Sonnet 4.5 or Opus)
+4. Open `KICKOFF_PROMPT.md`, select from *"You are the lead engineer…"* to the end, **paste, send once**
+5. Let it run — it scaffolds Next.js itself. **Do NOT run `create-next-app` first.**
+6. Open `http://localhost:3000` and scroll.
 
 ---
 
 ## 4. Verify & iterate
 
 - Scroll top → bottom: frames should scrub smoothly, labels fade per scene.
-- With zero frames: you should see clean placeholders with scene names (proves the machine works).
+- With zero frames: clean placeholders with scene names (proves the machine works).
 - Add real frames → refresh → same code, real film.
 - Follow-up prompts stay tiny: *"tighten the hero hold to 0–18%,"* *"make the reveal label bigger,"* *"add more frames to the interior scene."*
 
@@ -73,7 +87,7 @@ Goal for the rough draft: **~12 frames**, one per beat, SAME Mineral Grey F80 M3
 
 ## 5. Deploy (later)
 
-- `git init` → push to GitHub → import to **Vercel** → live URL. (Ask Claude to do this when you're ready.)
+Push to GitHub → import to **Vercel** → live URL. The Vercel MCP is already connected, so you can just ask Claude to do this when the draft is good.
 
 ---
 
@@ -81,4 +95,4 @@ Goal for the rough draft: **~12 frames**, one per beat, SAME Mineral Grey F80 M3
 
 - **Denser film:** generate 24–60 frames per scene, or render a real clip and explode it to frames with ffmpeg.
 - **Real-time 3D:** the original `docs/ORIGINAL_BRIEF.md` Spline → React Three Fiber path, swapped in behind `CinematicStage`.
-- **Automated frames:** call the Gemini image API from a script instead of the manual app.
+- **Automated frames:** switch to the Gemini image API and call it from a script instead of the manual app. *(Would need a `GEMINI_API_KEY` in `.env.local` — already covered by `.gitignore`.)*

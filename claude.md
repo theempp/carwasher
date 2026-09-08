@@ -138,7 +138,12 @@ public/
 |---|---|
 | **Claude** (this) | Architect. Owns this brief + the kickoff prompt. Can scaffold. |
 | **Nano Banana Pro 2** (Gemini 3 Pro Image) | Frame factory. Generates the hero + every scene keyframe with a consistent Mineral Grey F80 M3. Stills only — it is NOT a video model. |
-| **Cursor** *or* **Google Antigravity** | The builder IDE. ONE agent scaffolds and edits the Next.js app from the kickoff prompt. They are substitutes — pick one primary. |
+| **Cursor** *or* **Google Antigravity** | The builder IDE. ONE agent scaffolds and edits the Next.js app from the kickoff prompt. They are substitutes — pick one primary. **Cursor is the chosen primary.** |
+
+**Available to any agent working this repo (all connected & verified 2026-09-08):**
+`gsap-skills` plugin (ScrollTrigger/pinning/timeline/performance guidance) · Magic UI MCP · 21st Magic MCP · Figma MCP (read-only, View seat) · Vercel MCP (deploy).
+
+**Frame pipeline is MANUAL** — Nano Banana Pro 2 via the Gemini app / AI Studio. No API key, no `.env.local`. Frames land in `public/frames/`.
 
 See `SETUP.md` for the exact step-by-step and the one paste-in prompt.
 
