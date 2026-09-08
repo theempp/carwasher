@@ -158,3 +158,13 @@ See `SETUP.md` for the exact step-by-step and the one paste-in prompt.
 ## 11. Definition of Done — Rough Draft
 
 1. `npm run dev` runs clean. 2. Page pins and scroll scrubs the frame sequence smoothly. 3. Placeholder renders correctly with zero frames present. 4. Dropping real frames into `public/frames/` upgrades it with no code change. 5. Editorial scene labels fade in/out on the same progress. 6. Hero matches the reference three-quarter. 7. Ends in a premium BOOK CTA that links out. 8. Mobile scrolls and scrubs (reduced frame count ok). 9. No SaaS look, no invented assets.
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->
