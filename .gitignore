@@ -20,6 +20,13 @@ yarn-error.log*
 .vscode/
 .idea/
 
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
 # Large raw 3D/media source (keep optimized assets in public/)
 *.blend
 *.blend1
