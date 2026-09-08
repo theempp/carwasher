@@ -76,13 +76,14 @@ spent yet.
 - **Tool:** Higgsfield MCP → `generate_video` (server id begins `229e641b…`).
 - **Model:** `seedance_2_5` (image-to-video).
 - **mode:** `omni_reference`.
-- **medias:** one entry, `{ "role": "start_image", "value": "<media_id of lambo-wash-01-last.jpg>" }`
-  — locks the new clip's first frame to the foam-coverage state we already have, so it picks up
-  exactly where the owner's clip ends.
+- **medias:** two entries —
+  `{ "role": "start_image", "value": "<media_id of lambo-wash-01-last.jpg>" }` (foam coverage,
+  framing lock) and `{ "role": "image_references", "value": "<media_id of the clean black-rim
+  Huracán still>" }` (paint + **all-black rims**, never silver).
 - **resolution:** `720p` to start (cost control); `1080p` for the eventual final if it holds up.
 - **aspect_ratio:** `16:9`.
-- **duration:** start with a single **5–10s** segment — there is no chaining-motion problem this time
-  (static camera), so there's no reason to over-plan multiple segments before seeing one result.
+- **duration:** **10s** (retake, 2026-09-08) — 2–3s locked side rinse, orbit while rinsing,
+  then a **2–3s front-and-centered hold** at the end.
 - **generate_audio:** `false` (scrubbed on scroll — audio is wasted cost).
 - **Decline the preset nudge:** decline **"IN THE DARK"** (id
   `24bae836-2c4a-48e0-89b6-49fcc0b21612`) — it hijacks the art direction toward moody/dark, which is
@@ -90,12 +91,16 @@ spent yet.
 - **Billing:** spends **credits**. ALWAYS preflight with `get_cost: true` and confirm the spend with
   the owner before generating. Pass `use_unlim: false`.
 
-### Prompt brief for the next clip (rinse & reveal)
-Static locked camera, EXACT same framing as the reference (side profile, driveway, villa, palm,
-golden backlight) — car is fully foam-covered at the start (matches `lambo-wash-01-last.jpg`); a
-pressure-rinse sheets the foam off in the same top-left-entering hose motion; paint emerges glossy
-black, wet, reflecting the sky and palm; camera never moves; end on a clean, dripping, mirror-glossy
-Huracán. No people visible. No cuts.
+### Prompt brief for the next clip (rinse & reveal → front)
+Hold the EXACT start-image framing for the first 2–3 seconds (static locked wide side profile —
+same distance as the start frame, do not push in). Gloss-black Huracán, **all-black multi-spoke
+rims** (never silver/chrome), driveway, villa, palm, golden backlight. Car is fully foam-covered
+at t=0. A pressure-rinse from the top-left hose runs across the ENTIRE car including the rear
+haunches, rear bumper, engine cover and rear wheels. Keep rinsing while the camera moves; only
+stop ~2 seconds before the last frame. By then every bit of foam is gone, especially the backside.
+Then orbit around the nose toward the front: stay **further back** (no dolly-in), **crane higher**.
+Arrive front-and-centered with **2–3 seconds left** and HOLD that frame to the end. End: wide,
+elevated, front-centered, wet mirror-black, black rims, foam-free. No people. No cuts.
 
 ### Poll & fetch pattern (unchanged from v2)
 1. `generate_video` returns a job with `status: pending`.
@@ -110,13 +115,22 @@ Huracán. No people visible. No cuts.
 | # | Clip | Status | File |
 |---|---|---|---|
 | 1 | Arrival → full foam coverage | ✅ have it — owner-supplied, re-encoded, ready to wire up | `public/video/lambo-wash-01-scrub.mp4` |
-| 2 | Foam rinse → clean glossy reveal | ⬜ not generated — **awaiting owner "go"** on credit spend | — |
+| 2 | Foam rinse → front reveal (orbit) | ✅ 10s take 2 in repo — **not wired**; one more designer tweak pending | `public/video/lambo-wash-02-rinse-scrub.mp4` |
 
 **Owner confirmation 2026-09-08:** the rinse-off is wanted as a *continuation of the same pinned
-scrub*, not a separate gallery beat. Same locked camera, same driveway, hose still entering
-top-left; clip 2 should start on `lambo-wash-01-last.jpg` (full foam) and sheet the foam off with
-water until gloss-black paint is back. That is exactly the §4 recipe. Still **do not generate**
-until the owner says go (credits). Until then the comparison stays "ARRIVAL" / "FULL COVERAGE".
+scrub*, not a separate gallery beat. Clip 2 still starts on `lambo-wash-01-last.jpg` (full foam,
+same side-profile framing as clip 1). **Designer amendment same day:** after 2–3s of locked-camera
+rinsing, the camera smoothly orbits around the nose to a dead-on front view, slightly higher
+angle — that end frame is the setup for the next scroll transition. Clip 1 stays static. Handoff
+at t=0 is still a locked match; motion begins only after the opening hold. Still **do not
+generate** until the owner says go (credits). Until clip 2 is signed off, the comparison stays
+"ARRIVAL" / "FULL COVERAGE". Do not wire clip 2 into the site yet.
+
+Take 1 (8s, too tight, silver rims, leftover rear foam, camera got close) is archived as
+`public/video/lambo-wash-02-rinse-take1.mp4` + `-scrub-take1.mp4` +
+`public/images/lambo-wash-02-last-take1.jpg`. Current take 2 is the 10s file at the
+canonical `lambo-wash-02-rinse*.mp4` paths. Identity still for black rims:
+`public/images/hurracan-black-rims-ref.jpg`.
 
 When clip 2 lands: all-intra re-encode (`-g 1`), serve as `lambo-wash-02-rinse-scrub.mp4`, chain it
 behind `<CinematicStage>` (concat or dual-source on one progress 0→1), grow `PIN_RUNWAY_VH` with
@@ -152,7 +166,8 @@ code** — see `docs/CURSOR_REBUILD_PROMPT.md`.
 - Preflight every generation (`get_cost: true`) and confirm the credit spend before firing — clip 2
   has not been generated and should not be until the owner explicitly says go.
 - Decline the "IN THE DARK" preset every time — wrong grade for this direction.
-- Match the exact static framing when generating clip 2 — any camera drift breaks the illusion of one
-  continuous observation.
+- Clip 2 must *open* on the exact static framing of `lambo-wash-01-last.jpg`. Camera motion is
+  allowed only after the 2–3s hold, and only as the designed orbit to a front, slightly-elevated
+  end frame — no accidental drift, no early move, no cuts.
 - Missing media → the site renders labeled placeholders (don't fake assets or claims).
 - Show the owner clip 2 before spending on anything further.
