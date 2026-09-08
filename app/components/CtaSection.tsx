@@ -1,43 +1,33 @@
 "use client";
 
-import { beatOpacity } from "@/lib/animation/easing";
-import { sceneTimeline } from "@/lib/scene/sceneTimeline";
+import { motion } from "motion/react";
+
+const ease = [0.22, 1, 0.36, 1] as const;
 
 // ▼ PASTE YOUR BOOKING LINK HERE — phone / Instagram DM / Calendly / Square
-const BOOKING_HREF = "#";
+const BOOKING_HREF = "#book";
 
-const sky = sceneTimeline[sceneTimeline.length - 1];
-
-type CtaSectionProps = {
-  progress: number;
-};
-
-export function CtaSection({ progress }: CtaSectionProps) {
-  const opacity = beatOpacity(progress, sky.start, sky.end);
-  const interactive = opacity > 0.35;
-
+export function CtaSection() {
   return (
-    <section
-      className="absolute inset-0 z-20 flex items-center justify-center"
-      style={{
-        opacity,
-        transform: `translate3d(0, ${(1 - opacity) * 12}px, 0)`,
-        willChange: "transform, opacity",
-        pointerEvents: interactive ? "auto" : "none",
-      }}
-      aria-hidden={!interactive}
-    >
-      <div className="px-6 text-center">
-        <h2 className="font-display mx-auto max-w-[11ch] text-[clamp(2.4rem,6.2vw,5.25rem)] leading-[0.9] font-extrabold tracking-[-0.04em] text-bone">
-          {sky.label}
+    <section id="book" className="bg-paper text-paper-fg">
+      <motion.div
+        className="mx-auto flex min-h-[78dvh] max-w-[92rem] flex-col justify-end px-[6vw] pt-24 pb-16 md:pb-20"
+        initial={{ opacity: 0, y: 28 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.4 }}
+        transition={{ duration: 0.85, ease }}
+      >
+        <p className="type-label text-muted">Book</p>
+        <h2 className="type-display mt-6 max-w-[12ch] text-[length:var(--display-size)]">
+          Request a time.
         </h2>
         <a
           href={BOOKING_HREF}
-          className="mt-8 inline-block font-mono text-[10px] tracking-[0.36em] text-amber uppercase underline decoration-amber decoration-1 underline-offset-[10px] transition-colors duration-300 hover:text-bone hover:decoration-bone"
+          className="type-label mt-10 inline-flex w-fit text-ink transition-colors duration-300 hover:text-muted"
         >
-          Reserve a time
+          Book
         </a>
-      </div>
+      </motion.div>
     </section>
   );
 }

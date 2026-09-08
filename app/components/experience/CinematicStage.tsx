@@ -1,32 +1,82 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
-import { useScrollProgress } from "@/lib/utils/useScrollProgress";
-import { CtaSection } from "@/app/components/CtaSection";
+import { Navigation } from "@/app/components/Navigation";
 import { ScrollProgress } from "@/app/components/ScrollProgress";
 import { FrameScrubber } from "@/app/components/experience/FrameScrubber";
 import { LoadingScreen } from "@/app/components/experience/LoadingScreen";
 import { SceneOverlay } from "@/app/components/experience/SceneOverlay";
+import { VideoScrubber } from "@/app/components/experience/VideoScrubber";
+import { useScrollProgress } from "@/lib/utils/useScrollProgress";
+
+type MediaMode = "video" | "stills" | "placeholder";
 
 export function CinematicStage() {
   const stageRef = useRef<HTMLElement>(null);
-  const progress = useScrollProgress(stageRef);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const progress = useScrollProgress(stageRef, { videoRef });
+  const [mode, setMode] = useState<MediaMode>("video");
   const [ready, setReady] = useState(false);
+
   const handleReady = useCallback(() => setReady(true), []);
+  const handleVideoFail = useCallback(() => {
+    setMode("stills");
+    setReady(false);
+  }, []);
+  const handleStillsFail = useCallback(() => {
+    setMode("placeholder");
+    setReady(true);
+  }, []);
 
   return (
-    <>
-      <LoadingScreen visible={!ready} />
+    <section
+      ref={stageRef}
+      className="relative h-dvh w-full overflow-hidden bg-ink"
+    >
+      {mode === "video" ? (
+        <VideoScrubber
+          videoRef={videoRef}
+          onReady={handleReady}
+          onFail={handleVideoFail}
+        />
+      ) : null}
+
+      {mode === "stills" ? (
+        <FrameScrubber
+          progress={progress}
+          onReady={handleReady}
+          onFail={handleStillsFail}
+        />
+      ) : null}
+
+      {mode === "placeholder" ? <FilmPlaceholder /> : null}
+
+      <div className="film-scrim pointer-events-none absolute inset-0 z-10" />
+      <SceneOverlay progress={progress} />
+      <Navigation />
       <ScrollProgress progress={progress} />
-      <section
-        ref={stageRef}
-        className="relative h-dvh w-full overflow-hidden bg-ink"
-      >
-        {/* Film source is isolated here. Swap FrameScrubber for video or R3F later. */}
-        <FrameScrubber progress={progress} onReady={handleReady} />
-        <SceneOverlay progress={progress} />
-        <CtaSection progress={progress} />
-      </section>
-    </>
+      <LoadingScreen visible={!ready && mode !== "placeholder"} />
+    </section>
+  );
+}
+
+function FilmPlaceholder() {
+  return (
+    <div className="absolute inset-0 z-0 flex items-center bg-ink px-[6vw]">
+      <div>
+        <p className="type-label text-muted">Film unavailable</p>
+        <p className="type-display mt-5 max-w-[16ch] text-[clamp(2rem,6vw,4.5rem)] text-panel-fg">
+          Place the scrub clip to begin.
+        </p>
+        <p className="mt-6 max-w-[26rem] text-[0.8rem] leading-relaxed tracking-[0.04em] text-muted">
+          Missing{" "}
+          <span className="text-panel-fg">
+            public/video/lambo-wash-01-scrub.mp4
+          </span>{" "}
+          and the arrival / full-coverage stills. Nothing here is a stand-in for
+          footage.
+        </p>
+      </div>
+    </div>
   );
 }

@@ -1,11 +1,15 @@
-import { Navigation } from "./components/Navigation";
+import { BeforeAfter } from "./components/BeforeAfter";
+import { CtaSection } from "./components/CtaSection";
+import { TrustPanel } from "./components/TrustPanel";
 import { CinematicStage } from "./components/experience/CinematicStage";
 
 export default function Home() {
   return (
     <main>
-      <Navigation />
       <CinematicStage />
+      <TrustPanel />
+      <BeforeAfter />
+      <CtaSection />
     </main>
   );
 }

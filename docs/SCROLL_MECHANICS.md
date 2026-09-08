@@ -34,7 +34,9 @@ These were derived from real reference sites (a yacht site and a grafted-tree si
    (`current += (target - current) * k`, k ≈ **0.09**), drive `video.currentTime` from `current`, not
    from raw scroll. **Undamped = flipbook. Damped = footage.** Not optional.
 5. **Non-linear pacing.** `smootherstep(t) = t³(t(6t−15)+10)` applied to progress before it drives
-   playback — a slower hold at the open, faster through the middle.
+   playback — a slower hold at the open, faster through the middle. As of 2026-09-08 the site uses
+   `cineEase` (22% linear + 78% smootherstep) so the first scroll actually moves the clip; damping
+   `k = 0.09` is unchanged. Tune in `lib/animation/easing.ts` only.
 6. **Text as stations composed into the shot**, fading on the same progress value, never pushing
    layout.
 
@@ -75,11 +77,16 @@ tab refocuses.
 
 ## 5. Release into normal scroll
 
-Once `progress` reaches 1.0 (full foam coverage), the pin releases and the page continues as an
-ordinary vertical scroll into the Trust panel and Before/After section (`docs/DESIGN_DIRECTION.md`
-§5). These sections are NOT pinned and NOT scroll-scrubbed — they're regular content with restrained
-scroll-triggered fade/translate-in, same motion vocabulary, much simpler mechanics (no video, no
-damping needed).
+Once `progress` reaches 1.0 (currently: full foam coverage), the pin releases and the page continues
+as an ordinary vertical scroll into the Trust panel and Before/After section
+(`docs/DESIGN_DIRECTION.md` §5). These sections are NOT pinned and NOT scroll-scrubbed — they're
+regular content with restrained scroll-triggered fade/translate-in, same motion vocabulary, much
+simpler mechanics (no video, no damping needed).
+
+**When clip 2 (rinse/reveal) exists:** it belongs on this same pinned stage, not as a new page
+section. Extend `PIN_RUNWAY_VH` so ~10s of film still feels deliberate; add a rinse station; keep
+Trust / comparison / BOOK after the pin. Do not generate clip 2 until the owner says go — see
+`docs/FILM_PIPELINE.md` §5.
 
 ---
 

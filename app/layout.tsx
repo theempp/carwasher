@@ -1,23 +1,27 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { DM_Mono, Syne } from "next/font/google";
+import { Archivo, Fraunces } from "next/font/google";
+import { SmoothScroll } from "./components/SmoothScroll";
 import "./globals.css";
 
-const syne = Syne({
+const fraunces = Fraunces({
   subsets: ["latin"],
-  weight: ["700", "800"],
-  variable: "--font-syne",
+  display: "swap",
+  axes: ["opsz"],
+  variable: "--font-fraunces",
 });
 
-const dmMono = DM_Mono({
+const archivo = Archivo({
   subsets: ["latin"],
-  weight: ["400"],
-  variable: "--font-dm-mono",
+  display: "swap",
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-archivo",
 });
 
 export const metadata: Metadata = {
-  title: "Andrew — Detail",
-  description: "A cinematic film of one car being detailed.",
+  title: "[BRAND]",
+  description:
+    "A scroll-controlled film of one car being washed on a private estate driveway.",
 };
 
 export default function RootLayout({
@@ -28,9 +32,12 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${syne.variable} ${dmMono.variable} h-full antialiased`}
+      className={`${fraunces.variable} ${archivo.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-ink text-bone">{children}</body>
+      <body className="min-h-full bg-ink text-panel-fg">
+        <SmoothScroll />
+        {children}
+      </body>
     </html>
   );
 }

@@ -1,31 +1,84 @@
 @import "tailwindcss";
 
+:root {
+  --ink: #0e0d0b;
+  --paper: #f6f2e9;
+  --paper-fg: #0e0d0b;
+  --panel: #0b0a08;
+  --panel-fg: #f6f2e9;
+  --muted: #8a8375;
+  --rule: rgba(14, 13, 11, 0.14);
+  --rule-inv: rgba(246, 242, 233, 0.18);
+  --display-weight: 480;
+  --display-size: clamp(2.25rem, 8vw, 6.5rem);
+  --display-ls: -0.01em;
+  --display-lh: 0.98;
+  --label-ls: 0.34em;
+  --label-size: 0.6rem;
+  --label-weight: 600;
+  --film-scrim: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.35) 0%,
+    rgba(0, 0, 0, 0) 22%,
+    rgba(0, 0, 0, 0) 78%,
+    rgba(0, 0, 0, 0.4) 100%
+  );
+}
+
 @theme inline {
-  --color-ink: #08090b;
-  --color-bone: #ede6d6;
-  --color-steel: #8e8a82;
-  --color-amber: #d6a441;
-  --font-display: var(--font-syne), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-dm-mono), ui-monospace, monospace;
+  --color-ink: var(--ink);
+  --color-paper: var(--paper);
+  --color-paper-fg: var(--paper-fg);
+  --color-panel: var(--panel);
+  --color-panel-fg: var(--panel-fg);
+  --color-muted: var(--muted);
+  --color-rule: var(--rule);
+  --color-rule-inv: var(--rule-inv);
+  --font-display: var(--font-fraunces), "Times New Roman", serif;
+  --font-label: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
 }
 
 html,
 body {
-  background: #08090b;
-  color: #ede6d6;
+  background: var(--ink);
+  color: var(--paper);
 }
 
 html {
-  scrollbar-color: #8e8a82 transparent;
+  scrollbar-color: var(--muted) transparent;
   scrollbar-width: thin;
 }
 
 body {
-  font-family: var(--font-dm-mono), ui-monospace, monospace;
+  font-family: var(--font-label);
   overflow-x: hidden;
 }
 
 ::selection {
-  background: #d6a441;
-  color: #08090b;
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.type-display {
+  font-family: var(--font-display);
+  font-weight: var(--display-weight);
+  font-variation-settings: "opsz" 72, "wght" 480;
+  letter-spacing: var(--display-ls);
+  line-height: var(--display-lh);
+}
+
+.type-label {
+  font-family: var(--font-label);
+  font-weight: var(--label-weight);
+  font-size: var(--label-size);
+  letter-spacing: var(--label-ls);
+  text-transform: uppercase;
+}
+
+.film-scrub {
+  filter: contrast(1.04) saturate(1.05);
+}
+
+.film-scrim {
+  background: var(--film-scrim);
 }

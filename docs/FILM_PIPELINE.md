@@ -112,6 +112,17 @@ Huracán. No people visible. No cuts.
 | 1 | Arrival → full foam coverage | ✅ have it — owner-supplied, re-encoded, ready to wire up | `public/video/lambo-wash-01-scrub.mp4` |
 | 2 | Foam rinse → clean glossy reveal | ⬜ not generated — **awaiting owner "go"** on credit spend | — |
 
+**Owner confirmation 2026-09-08:** the rinse-off is wanted as a *continuation of the same pinned
+scrub*, not a separate gallery beat. Same locked camera, same driveway, hose still entering
+top-left; clip 2 should start on `lambo-wash-01-last.jpg` (full foam) and sheet the foam off with
+water until gloss-black paint is back. That is exactly the §4 recipe. Still **do not generate**
+until the owner says go (credits). Until then the comparison stays "ARRIVAL" / "FULL COVERAGE".
+
+When clip 2 lands: all-intra re-encode (`-g 1`), serve as `lambo-wash-02-rinse-scrub.mp4`, chain it
+behind `<CinematicStage>` (concat or dual-source on one progress 0→1), grow `PIN_RUNWAY_VH` with
+the extra duration, add a rinse station, then swap the comparison's second still + label to the
+real reveal frame.
+
 **What this means for the site right now:** the hero clip alone does not show a "clean" reveal — it
 ends mid-foam. `docs/DESIGN_DIRECTION.md` §5 already accounts for this: the before/after section
 must be honestly labeled ("ARRIVAL" vs "FULL COVERAGE") until clip 2 exists, and the trust-panel/CTA
