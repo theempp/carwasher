@@ -1,5 +1,12 @@
 # SETUP — Build the Site with Cursor + Nano Banana Pro 2
 
+> ⚠️ **PARTIALLY SUPERSEDED 2026-09-08 (v3).** Section 1 (environment) is still accurate and
+> unchanged. Sections 2–3 describe the v1 manual Nano-Banana-stills pipeline, which is no longer how
+> this site is built — the hero is now a real supplied video clip, already in the repo at
+> `public/video/lambo-wash-01-scrub.mp4`. **For the current build step, use
+> `docs/CURSOR_REBUILD_PROMPT.md` instead of §3 below.** Sections 4–6 (verify/deploy/upgrade paths)
+> still apply generally.
+
 Read this with `claude.md` (the master brief). This is the *how*. Short and in order.
 
 **Backend setup status: ✅ COMPLETE (verified 2026-09-08).** Section 1 is done. Start at Section 2.
@@ -67,11 +74,14 @@ Drop them in **`public/frames/`** — the folder already exists and documents th
 
 ## 3. Build the site (Cursor) — ONE prompt
 
+> ⚠️ Superseded — see the banner at the top of this file. Use `docs/CURSOR_REBUILD_PROMPT.md`.
+
 1. Cursor → **File › Open Folder** → `/Users/zozo/Desktop/AndrewWebsite`
 2. Press **Cmd+I** to open Composer, set the mode to **Agent**
 3. In the model picker, choose a **Claude** model (Sonnet 4.5 or Opus)
-4. Open `KICKOFF_PROMPT.md`, select from *"You are the lead engineer…"* to the end, **paste, send once**
-5. Let it run — it scaffolds Next.js itself. **Do NOT run `create-next-app` first.**
+4. Open `docs/CURSOR_REBUILD_PROMPT.md`, copy the fenced prompt block under "THE PROMPT", **paste, send once**
+5. It builds against the existing scaffold (Next.js/TS/Tailwind/GSAP already installed) and the
+   video already in `public/video/`.
 6. Open `http://localhost:3000` and scroll.
 
 ---

@@ -1,119 +1,107 @@
-# Scroll Mechanics — how the continuous take reveals (LOCKED)
+# Scroll Mechanics — how the static-shot clip reveals (LOCKED, v3)
 
-> Derived 2026-09-08 from two owner-supplied reference videos, analysed frame by frame.
-> This is the behavioural spec for the scroll experience. `docs/FILM_PIPELINE.md` owns the film;
+> Updated 2026-09-08 after the owner supplied `lambo-wash-01.mp4` and the direction moved back to a
+> **vertical** scroll over a **static-camera** clip. `docs/FILM_PIPELINE.md` owns the film;
 > `docs/DESIGN_DIRECTION.md` owns the look; **this file owns the motion.**
+>
+> Everything in §3 below is unchanged in substance from the v2 spec — those mechanics were derived
+> from real reference sites and are axis-independent. Only the axis (§4) and the station map (§6)
+> change for v3.
 
 ---
 
-## 1. The references
+## 1. Why vertical again
 
-| | Ref A | Ref B |
-|---|---|---|
-| Source | `ScreenRecording_09-08-2026 10-33-11_1.mov` (4.5s) | `ScreenRecording_09-08-2026 00-08-21_1.mov` (8.2s) |
-| Site | "Blue-Water Luxury" (`localhost:5174`) | "Pear", via WebForge |
-| Subject | Superyacht at sunset | Grafted pear branch → tree |
-| Tech | Scroll-controlled WebGL | Scroll-controlled WebGL |
-
-Both refs are real-time 3D. **We are reproducing the *grammar* with a video scrub**, which is a
-legitimate and simpler path to the same feel (it is what Apple ships). The grammar below is what
-matters; the rendering technique is not.
+v2 moved to horizontal scroll to match a continuous side-travelling camera glide. That footage was
+never produced. The clip actually in hand (`lambo-wash-01.mp4`) is a **static locked-off shot** — the
+car doesn't travel across the frame, it sits still while the wash happens *to* it. There is no
+lateral motion to justify a horizontal scroll axis. Vertical scroll is also what the competitor
+reference site ("VARNISH," analysed 2026-09-08) uses for this exact kind of shot. Revert to vertical.
 
 ---
 
-## 2. Ref A is our storyboard, beat for beat
+## 2. What stays true regardless of axis
 
-Ref A's structure already matches the locked film:
+These were derived from real reference sites (a yacht site and a grafted-tree site, both real-time
+3D) in the v2 session and hold regardless of scroll direction:
 
-1. Yacht as a dot on the horizon — wide, near-still. Text **left**.
-2. Slow approach. Text swaps to **centre**.
-3. Closer. Text **right**.
-4. Yacht fills frame and sweeps past camera (heavy motion blur).
-5. Camera travels **along the hull**.
-6. Eases **into the lit interior**.
-
-Swap yacht → car and ocean → wash tunnel and that is our six-beat film, **including the ease into the
-cabin**. Ref A's exterior→interior move is the direct analogue of our interior glimpse. The locked
-direction is externally validated — do not re-litigate the beats.
-
----
-
-## 3. The six mechanics (implement all six)
-
-1. **Scroll is the transport, not a trigger.** Position-mapped, never event-fired. Stop scrolling and
-   the image freezes *mid-motion*; scroll back and it runs backward. **This reversibility is the
-   single biggest tell** separating this from ordinary scroll-reveal.
-2. **One subject that never resets.** Continuous in space and time. (This is exactly the failure the
-   old per-scene clips had — each re-anchored to the same dirty reference, so the car reset at every
-   boundary and it read as cutting between pages.)
-3. **Pinned stage.** Media is `position: fixed`, full-bleed. Nothing scrolls *past*. The scroll
-   container is an empty runway whose only job is to generate progress distance (~760vw).
-4. **Damped scroll.** Lerp `current` toward `target` each frame (`current += (target-current)*k`,
-   k ≈ **0.09**) and drive `video.currentTime` from `current`. **Undamped = flipbook. Damped =
-   footage.** This is the detail most implementations miss and it is not optional.
-5. **Text as stations composed into the shot.** Copy fades in/out on the same progress value, at
-   varying positions in frame. It never pushes layout and never sits in a fixed corner.
-6. **Non-linear pacing.** `smootherstep(t) = t³(t(6t−15)+10)`. Slow hold at the open, acceleration
-   through the middle, settle at the payoff. At 20% scroll you are only ~6% into the film; at 80%
-   you are ~94%. This is Ref A's yacht sitting tiny on the horizon before rushing past.
-
-**Ref B's extra trick, held in reserve:** when it changes context it carries continuity by keeping
-the *pear* present across the change — object permanence rather than camera permanence. If a chain
-hand-off ever comes out rough, keep the car unmistakably the same car through the join.
+1. **Scroll is the transport, not a trigger.** Position-mapped, never event-fired.
+2. **One subject that never resets.** The car and camera are continuous in space and time for the
+   whole pinned duration.
+3. **Pinned stage.** Media is `position: fixed`, full-bleed, while an empty scroll runway generates
+   progress distance.
+4. **Damped scroll.** Lerp `current` toward `target` each frame
+   (`current += (target - current) * k`, k ≈ **0.09**), drive `video.currentTime` from `current`, not
+   from raw scroll. **Undamped = flipbook. Damped = footage.** Not optional.
+5. **Non-linear pacing.** `smootherstep(t) = t³(t(6t−15)+10)` applied to progress before it drives
+   playback — a slower hold at the open, faster through the middle.
+6. **Text as stations composed into the shot**, fading on the same progress value, never pushing
+   layout.
 
 ---
 
-## 4. Horizontal mapping
+## 3. Two implementation traps (both hit before, both apply again)
 
-- Page scrolls **right**; the car advances right; left = dirty, right = spotless.
-- `progress = window.scrollX / (document.body.scrollWidth - window.innerWidth)`.
-- **Map vertical wheel to horizontal advance** so a normal trackpad works:
-  on `wheel`, if `|deltaY| > |deltaX|`, `preventDefault()` and `scrollBy({left: deltaY})`.
-- Support arrow keys (←/→ and ↑/↓) for accessibility.
+**Trap 1 — keyframes.** `video.currentTime` seeking snaps to the nearest keyframe.
+`lambo-wash-01.mp4` measured at **1 keyframe across 121 frames** — already fixed, see
+`docs/FILM_PIPELINE.md` §3. Serve `lambo-wash-01-scrub.mp4`, never the raw file.
 
----
+**Trap 2 — endpoint fades.** If every station fades symmetrically, the first label is invisible on
+arrival and the last one vanishes exactly at the pin's end. **Station 0 opens at full opacity; the
+last pinned station holds through release into the trust panel.** Only middle stations fade both
+ways.
 
-## 5. Two implementation traps (both hit and solved already)
-
-**Trap 1 — keyframes.** `video.currentTime` seeking snaps to the nearest keyframe. The original
-`wash-hero.mp4` had **exactly 1 keyframe across 193 frames**, so every seek decoded from frame zero.
-Encode the master **all-intra**:
-
-```bash
-ffmpeg -i film-master.mp4 -c:v libx264 -g 1 -preset veryfast -crf 20 \
-       -pix_fmt yuv420p -an film-master-scrub.mp4
-```
-
-Cost measured on the hero clip: 3.3MB → 6.2MB, **1.9× size for instant seeking.** Non-negotiable.
-
-**Trap 2 — endpoint fades.** If every station fades symmetrically, the first headline is invisible on
-arrival (localProgress 0 → opacity 0) and the BOOK CTA vanishes exactly at 100%. **Station 0 opens
-already at full opacity; the last station holds through the end.** Only the middle stations fade on
-both sides.
-
-Also: `requestAnimationFrame` is suspended while a tab is hidden, so state goes stale. On
-`visibilitychange` back to visible, re-read scroll and snap `current = target` before applying.
+Also: `requestAnimationFrame` is suspended while a tab is hidden. On `visibilitychange` back to
+visible, re-read scroll and snap `current = target` before continuing, or the video jumps once the
+tab refocuses.
 
 ---
 
-## 6. Station map
+## 4. Vertical mapping
 
-Six stations over progress 0..1, matching the film's beats:
+- Page scrolls **down**; the clip advances from arrival toward full foam coverage as scroll
+  increases; scrolling up runs it backward.
+- Inside the pin range:
+  `progress = clamp((scrollY - pinStart) / pinRangeHeight, 0, 1)`
+  where `pinRangeHeight` is the scroll distance allotted to the pinned stage (GSAP ScrollTrigger's
+  `end` relative to `start`) — tune this so the clip's 5.04s duration feels deliberate, not rushed;
+  start around **400–600vh** of runway and adjust by feel.
+- Standard vertical wheel/trackpad/touch input works natively — **no wheel-axis remapping needed**
+  this time (that was a horizontal-scroll-only requirement in v2 and can be dropped).
+- Arrow keys (↑/↓), Page Up/Down, spacebar should all work as they normally do for vertical scroll —
+  don't intercept them; ScrollTrigger's pin handles this if wired normally.
 
-| # | Range | Eyebrow | Headline | Sub |
+---
+
+## 5. Release into normal scroll
+
+Once `progress` reaches 1.0 (full foam coverage), the pin releases and the page continues as an
+ordinary vertical scroll into the Trust panel and Before/After section (`docs/DESIGN_DIRECTION.md`
+§5). These sections are NOT pinned and NOT scroll-scrubbed — they're regular content with restrained
+scroll-triggered fade/translate-in, same motion vocabulary, much simpler mechanics (no video, no
+damping needed).
+
+---
+
+## 6. Station map (pinned phase only)
+
+The pinned phase is one continuous clip, not eight invented beats like v2 — station count matches
+what's actually visible in a 5-second clip:
+
+| # | Range (of pin progress) | Eyebrow | Headline | Sub |
 |---|---|---|---|---|
-| 0 | .00–.16 | Segment 01 — Arrival | It arrives / as it is | No judgement. Just the before. |
-| 1 | .16–.34 | Segment 02 — Wheels | Where / it hides | Brake dust, road film, winter brine. |
-| 2 | .34–.54 | Segment 03 — Foam | Under / the foam | pH-neutral. Zero contact. Zero swirl. |
-| 3 | .54–.70 | Segment 04 — Rinse | Stripped / to paint | Every panel sheeted clean. |
-| 4 | .70–.86 | Segment 05 — Cabin | Inside / the quiet | Glass, leather, vents, seams. |
-| 5 | .86–1.0 | Segment 06 — Reveal | It leaves / transformed | Book the detail. → CTA |
+| 0 | .00–.30 | Arrival | It shows up / exactly as it is | No staging. This is the car as it arrived. |
+| 1 | .30–.75 | The wash | Watch it / disappear | Foam builds, panel by panel. |
+| 2 | .75–1.0 | (holds, no new label — carries into Trust panel on release) | | |
 
-Copy is a working draft — the owner has not signed off on the words, only the structure.
+Copy is a working draft — the owner has not signed off on final words. Keep station 0 at full opacity
+on load (Trap 2, §3) and let station 1's label persist through release rather than fading out right
+before the pin ends.
 
 ---
 
 ## 7. Reference implementation
 
-`public/direction-lab.html` implements all of the above against the real hero footage. Read it before
-rebuilding; it is the behavioural reference, not shipped code.
+`public/direction-lab.html` still exists from v2 and demonstrates the damping/pacing mechanics
+correctly, but its footage, axis, and visual direction are all superseded — read it only for the
+motion math (damping constant, smootherstep, endpoint-fade handling), not for layout or look.

@@ -3,132 +3,148 @@
 > Canonical source of truth. Every tool (Claude, Cursor, Google Antigravity) reads THIS file first.
 > The original long-form vision is preserved at `docs/ORIGINAL_BRIEF.md`.
 
-> ⚠️ **UPDATE 2026-09-08 — film direction & site look RE-LOCKED.** The film is now ONE seamless
-> **continuous take** with **HORIZONTAL scroll** (car drives right, dirty→spotless), moody/cinematic,
-> built as **chained video segments** — see `docs/FILM_PIPELINE.md` (authoritative for the film).
-> This supersedes the "12 stills / vertical frame-by-frame / 8-scene cut" framing and the
-> vertical `sceneTimeline` below. The site re-design is **now locked as MINERAL** — see
-> `docs/DESIGN_DIRECTION.md`. Scroll behaviour is specified in `docs/SCROLL_MECHANICS.md`.
+> ⚠️ **UPDATE 2026-09-08 (v3) — direction RE-LOCKED again, this time from a real owner-shot clip.**
+> The film is now **ONE static locked-off shot** (camera never moves), **VERTICAL scroll**, a glossy
+> black **Lamborghini Huracán** on a sunlit estate driveway, shown in full colour (not desaturated).
+> This supersedes the previous v2 direction (horizontal continuous take, wash bay, Mineral Grey BMW,
+> monochrome MINERAL look) entirely. Authoritative docs:
+> - `docs/FILM_PIPELINE.md` — the film (owns the footage)
+> - `docs/DESIGN_DIRECTION.md` — **ESTATE**, the new locked look (owns the palette/type)
+> - `docs/SCROLL_MECHANICS.md` — the motion (owns the scroll behaviour, now vertical)
+> - `docs/CURSOR_REBUILD_PROMPT.md` — the one-shot prompt to hand to Cursor
+> Sections 3–6 below are rewritten to match. Do not build against anything older.
 
 ---
 
 ## 1. Concept (one line)
 
-A scroll-controlled cinematic film of one car being detailed — **dirty → wash → foam → rinse → interior → clean reveal → drive away → sky → BOOK** — where scrolling scrubs the film frame by frame. The car is the character. Scroll is the timeline. The detailing process is the navigation.
+A scroll-controlled cinematic clip of one car being washed on a private estate driveway — **static
+camera, golden-hour light, glossy black paint disappearing under hand-sprayed foam as you scroll** —
+followed by a short trust statement and a before/after comparison, ending in a BOOK CTA.
 
-The user should feel: *"I'm moving through the detail,"* not *"I'm scrolling a website."*
+The user should feel: *"I'm watching this happen in real time as I scroll,"* not *"I'm scrolling a
+website."* Scroll position IS the clip's playhead — nothing more, nothing less.
 
 It must NOT look like a SaaS landing page, template, or generic detailing business site.
 
 ---
 
-## 2. Architecture Decision (LOCKED)
+## 2. Architecture Decision (LOCKED, v3)
 
-**Image-sequence scroll scrub** — the exact technique Apple uses for its product pages.
+**Video-scrub, not canvas image-sequence.** The hero is a single `<video>` element, all-intra
+encoded (every frame a keyframe), whose `currentTime` is driven directly by damped scroll progress.
 
-- The "film" is a **numbered sequence of still frames** (`frame-0001.jpg …`).
-- A `<canvas>` draws frame `N`, where `N = f(scrollProgress)`.
-- Scrolling forward/back scrubs the sequence. No autoplay, no video codec seeking jank.
-- One pinned tall scroll container drives the whole thing via **GSAP ScrollTrigger**.
+- Why video and not stills now: the footage already exists (owner-shot/-generated real motion —
+  spray arcing, foam texture building, light shifting on wet paint) and reads far better as
+  continuous video than as ~12 interpolated stills. A static locked camera also means there is no
+  camera-move interpolation problem stills would have to fake.
+- Why scrubbing a `<video>` is safe: `video.currentTime` seeking snaps to the nearest keyframe. An
+  ordinary export has ~1 keyframe for the whole clip, which makes scrubbing unusable. Fixed by
+  re-encoding **all-intra** (`-g 1`, every frame a keyframe) — proven on this exact clip, see
+  `docs/FILM_PIPELINE.md` §3. This is non-negotiable, not optional polish.
+- Canvas image-sequence (the original v1 approach) remains a valid **fallback** if a future scene
+  needs to be stills-only (e.g. a static before/after comparison) but is no longer the primary
+  mechanism for the hero.
 
-Why this and NOT real-time 3D (Spline/R3F): faster to a great result, trivially smooth scrubbing, art-directed pixel quality from an image model, no WebGL performance risk on mobile. Real-time 3D (the original `docs/ORIGINAL_BRIEF.md` path) is a **Phase 2 upgrade**, not the first draft.
-
-Why frames and NOT a `<video>`: frame-accurate scrubbing on all browsers, no decode stalls, easy to swap/extend per scene.
-
-**Rough draft** = ~10–16 keyframes (one per scene + transitions), crossfaded/scrubbed — proves the mechanic + art direction.
-**Production** = dense per-scene sequences (24–60 frames each) or a rendered clip exploded to frames.
+**One pinned full-bleed stage, normal document flow below it.** The hero clip is pinned
+(`position: fixed`) for a vertical scroll runway; once the clip finishes scrubbing, the page releases
+into ordinary vertical scroll for the trust panel, before/after section, and CTA. GSAP ScrollTrigger
+owns the pin + progress mapping.
 
 ---
 
 ## 3. The Car
 
-**BMW F80 M3 — Mineral Grey Metallic.**
+**Lamborghini Huracán — gloss black.**
 
-Rationale: mid-grey is the only value that *holds specular highlights*, and the whole payoff is dull → reflective. Black reads reflections as noise (reveal lands as nothing); white blows out under the amber backlight. Mineral Grey sits in the reference photo's tonal family, stays inside the black/white/grey/navy foundation, and frees the single electric accent for typography instead of spending it on paint.
+Rationale (changed from v2's Mineral Grey BMW): the payoff in this footage is not paint reflectivity
+(dull → mirror) — it's **coverage** (bare gloss paint → foam texture spreading across it). Black
+paint gives the sharpest silhouette against the driveway's warm stone, white villa, and golden
+backlight, and the black-vs-white-foam contrast is what makes the transformation legible frame to
+frame. This also matches the owner-approved external reference (a competitor site, "VARNISH" —
+analysed 2026-09-08) which uses the same estate-driveway, static-camera, side-profile setup.
 
-Reference composition: `Photo Sep 07 2026, 10 17 30 PM.jpg` — dark wash bay, front three-quarter, overhead rinse falling, amber backlight curtain, wet reflective floor.
+Reference clip: `public/video/lambo-wash-01.mp4` (owner-shot/-sourced, 2026-09-08) — static side
+profile, car facing left, herringbone brick driveway, modern white villa with a pierced concrete
+screen wall, single palm tree, golden-hour backlight with lens flare from camera-right, hose entering
+frame top-left.
 
 ---
 
-## 4. Art Direction — **MINERAL (LOCKED 2026-09-08)**
+## 4. Art Direction — **ESTATE (LOCKED 2026-09-08, v3)**
 
-> ⚠️ The previous palette/typography in this section has been **replaced**. The authoritative spec is
-> **`docs/DESIGN_DIRECTION.md`** — read it before writing any style code.
+> The authoritative spec is **`docs/DESIGN_DIRECTION.md`** — read it before writing any style code.
+> This replaces v2's MINERAL (brutal monochrome, Anton type, forced grayscale grade) entirely.
 
-**Direction: MINERAL.** Brutal monochrome — pure black/white, film fully desaturated
-(`grayscale(1) contrast(1.16)`), oversized condensed type (**Anton**, ~15vw) bleeding off both edges
-and drifting counter to the scroll. Labels in **Archivo** at `.34em` tracking. Mineral blue-grey
-`#8C99A6` for sub-copy and rules.
+**Direction: ESTATE.** The film plays in **full native colour** — golden-hour light, warm stone,
+palm green — because that warmth *is* the reference look; forcing a grayscale grade (v2's approach)
+would destroy the exact thing that sold this direction. UI chrome stays achromatic (ink/paper/warm
+neutral grey) so the only saturated colour on the page is the light in the footage itself — same
+underlying principle as v2, just no longer applied to the footage too.
 
-**There is deliberately NO chromatic accent.** The only colour on the site is the light inside the
-film. Do not reintroduce an accent hue.
+Elegant serif display type (**Fraunces**) for the wordmark and the trust-panel headline, paired with
+small tracked-out **Archivo** labels (carried over from v2 — it already reads well small).
 
-Chosen by the owner on 2026-09-08 from a live three-way scroll comparison
-(`public/direction-lab.html`), beating "Apex" (cold blue technical) and "Tungsten" (warm serif).
+**UI (only what's necessary):** wordmark · minimal nav · hairline progress rail + numeral · CTA ·
+one section label per beat.
 
-**UI (only what's necessary):** wordmark · minimal nav · hairline progress rail + giant numeral · CTA · station labels.
+**Forbidden:** SaaS gradients · glassmorphism · card grids · rounded-everything · sci-fi portals ·
+game-like visuals · visible human detailer · clutter · decorative motion with no purpose.
 
-**Forbidden:** SaaS gradients · glassmorphism · card grids · rounded-everything · sci-fi portals · game-like visuals · visible human detailer · clutter · decorative motion with no purpose.
+Motion: restrained. fade / translate / clip-reveal. No bounce, no random parallax, no generic
+scroll-reveals everywhere. **Scroll damping is mandatory — see `docs/SCROLL_MECHANICS.md`.**
 
-Motion: restrained. fade / translate / clip-reveal / counter-parallax. No bounce, no random parallax, no generic scroll-reveals everywhere. **Scroll damping is mandatory — see `docs/SCROLL_MECHANICS.md`.**
+---
 
 ## 5. Scroll Timeline (centralized, tunable)
 
-> ⚠️ **SUPERSEDED.** The vertical 8-scene timeline below is retired. The live spec is the six
-> **horizontal** stations in `docs/SCROLL_MECHANICS.md` §6, driving a 3-segment film
-> (`docs/FILM_PIPELINE.md`). Kept here only for history.
+> Full spec: `docs/SCROLL_MECHANICS.md`. Summary only, below — do not hard-code these numbers in
+> more than one place; `lib/scene/sceneTimeline.ts` (or its v3 equivalent) is the single source.
 
-Percentages are starting values, tuned in ONE place: `lib/scene/sceneTimeline.ts`.
+The experience is now **two phases**, not one long multi-beat film:
 
-```
-0.00–0.15  hero          dirty/wet car, reference three-quarter, hold
-0.15–0.35  wheel-clean   foam onto rims → coverage → rinse clean
-0.35–0.55  exterior-wash spray → full foam → pressure rinse → reflective paint
-0.55–0.65  interior-reveal camera to front, doors open, mats fly out
-0.65–0.85  interior-detail vacuum, wipe seats/dash/doors (nobody visible)
-0.85–0.90  clean-reveal  reassemble; FRONT camera arrives as interior finishes (the payoff)
-0.90–0.97  departure     camera to rear, car drives away
-0.97–1.00  sky-transition bright cloud opening; car vanishes → BOOKING CTA
-```
+1. **Pinned hero scrub (vertical, ~0–85% of the runway)** — one static-camera clip,
+   `public/video/lambo-wash-01-scrub.mp4`, scrubbed start→end as the user scrolls. Arrival (clean
+   gloss black) → foam building → full foam coverage.
+2. **Normal scroll flow (released, ~85–100%)** — Trust panel ("THE BEST IN [REGION]." + reviews) →
+   Before/After comparison → BOOK CTA. These are ordinary stacked sections, not pinned.
 
-```ts
-export const sceneTimeline = [
-  { start: 0.00, end: 0.15, scene: "hero",           label: "THE ARRIVAL" },
-  { start: 0.15, end: 0.35, scene: "wheel-clean",    label: "THE WHEELS" },
-  { start: 0.35, end: 0.55, scene: "exterior-wash",  label: "THE WASH" },
-  { start: 0.55, end: 0.65, scene: "interior-reveal",label: "OPEN UP" },
-  { start: 0.65, end: 0.85, scene: "interior-detail",label: "THE INTERIOR" },
-  { start: 0.85, end: 0.90, scene: "clean-reveal",   label: "THE REVEAL" },
-  { start: 0.90, end: 0.97, scene: "departure",      label: "DRIVE AWAY" },
-  { start: 0.97, end: 1.00, scene: "sky-transition", label: "BOOK YOUR DETAIL" },
-];
-```
+This is a deliberate simplification from v2's eight-beat wash-bay-to-departure narrative: one real
+clip, honestly represented, beats a longer invented arc with no footage behind it.
 
 ---
 
-## 6. Frame Assets
+## 6. Media Assets
 
 ```
-public/frames/frame-0001.jpg  (dirty hero)
-public/frames/frame-0002.jpg
-...                            (one per scene/transition for the rough draft)
+public/video/lambo-wash-01.mp4         raw owner clip (5.04s, 24fps, 1280x720, 1 keyframe — DO NOT serve this)
+public/video/lambo-wash-01-scrub.mp4   all-intra re-encode (120/121 keyframes) — SERVE THIS to <video>
+public/images/lambo-wash-01-first.jpg  first frame still — poster image / "before" fallback
+public/images/lambo-wash-01-last.jpg   last frame still — "after" fallback until a rinse/reveal
+                                        clip exists (see docs/FILM_PIPELINE.md §5 for the honest
+                                        caveat on what "after" currently means)
 ```
 
-- Zero-padded, sequential, one folder, uniform dimensions, 16:9 (or 21:9 hero).
-- Generated by **Nano Banana Pro 2** with the SAME car held consistent across every frame.
-- Never invent a frame path. If frames are missing, the scrubber renders a clearly-labeled placeholder gradient with the scene label so the whole site is testable before art lands.
+- Never invent a media path. If `lambo-wash-01-scrub.mp4` is missing, `<CinematicStage>` must fall
+  back to the still frames, and if those are missing too, render a clearly-labeled placeholder — same
+  rule as v1/v2, unchanged.
+- A second clip (rinse/reveal, same static camera, chained off `lambo-wash-01-last.jpg`) is planned
+  but **not yet generated** — see `docs/FILM_PIPELINE.md` §5. Do not fake it.
 
 ---
 
 ## 7. Tech Stack
 
 - **Next.js (App Router) + TypeScript + Tailwind** — app + layout + type.
-- **GSAP + ScrollTrigger** — pin the stage, map scroll → progress (0..1).
-- **Canvas 2D frame scrubber** — preload frames, draw `frames[index]`, `index = round(progress * (N-1))`.
-- Overlay layer — editorial type per scene, driven by the same progress value.
-- **No backend.** CTA links out (phone / Instagram DM / Calendly / Square — Andrew's existing channel).
+- **GSAP + ScrollTrigger** — pin the stage, map scroll → damped progress (0..1).
+- **`<video>` scrub (primary)** — all-intra MP4, `video.currentTime = progress * duration`.
+- **Canvas 2D frame-sequence (fallback only)** — kept as a documented escape hatch, not the default.
+- Overlay layer — one section label + the trust-panel headline, driven by the same progress value.
+- **No backend.** CTA links out (phone / Instagram DM / Calendly / Square — owner's existing
+  channel — `[BRAND]` and the actual link are placeholders until the owner supplies them).
 
-Keep 3D/media logic isolated behind a `<CinematicStage>` so the film source (frames now, video or R3F later) can be swapped without touching the rest of the site.
+Keep media logic isolated behind a `<CinematicStage>` so the source (video now, denser video or R3F
+later) can be swapped without touching the rest of the site.
 
 ---
 
@@ -138,15 +154,15 @@ Keep 3D/media logic isolated behind a `<CinematicStage>` so the film source (fra
 app/
   layout.tsx  page.tsx  globals.css
   components/
-    Navigation.tsx  ScrollProgress.tsx  CtaSection.tsx
-    experience/  CinematicStage.tsx  FrameScrubber.tsx  SceneOverlay.tsx  LoadingScreen.tsx
+    Navigation.tsx  ScrollProgress.tsx  CtaSection.tsx  TrustPanel.tsx  BeforeAfter.tsx
+    experience/  CinematicStage.tsx  VideoScrubber.tsx  FrameScrubber.tsx(fallback)  SceneOverlay.tsx  LoadingScreen.tsx
 lib/
-  scene/sceneTimeline.ts     # the timeline above (single source)
+  scene/sceneTimeline.ts     # phase/station timing — single source
   animation/easing.ts
   utils/useScrollProgress.ts
 public/
-  frames/                    # generated frames
-  images/                    # reference, logo
+  video/                     # lambo-wash-01.mp4 + -scrub.mp4
+  images/                    # stills, reference, logo
 ```
 
 ---
@@ -155,28 +171,26 @@ public/
 
 | Tool | Role |
 |---|---|
-| **Claude** (this) | Architect. Owns this brief + the kickoff prompt. Can scaffold. |
-| **Nano Banana Pro 2** (Gemini 3 Pro Image) | Frame factory. Generates the hero + every scene keyframe with a consistent Mineral Grey F80 M3. Stills only — it is NOT a video model. |
-| **Cursor** *or* **Google Antigravity** | The builder IDE. ONE agent scaffolds and edits the Next.js app from the kickoff prompt. They are substitutes — pick one primary. **Cursor is the chosen primary.** |
+| **Claude** (this) | Architect. Owns this brief + the docs + the Cursor prompt. Can scaffold. |
+| **Higgsfield (`generate_video`, `seedance_2_5`)** | Generates the *next* clip (rinse/reveal), chained off `lambo-wash-01-last.jpg` as `start_image`, same static camera. See `docs/FILM_PIPELINE.md` §5. |
+| **Cursor** *or* **Google Antigravity** | The builder IDE. ONE agent scaffolds and edits the Next.js app from `docs/CURSOR_REBUILD_PROMPT.md`. They are substitutes — pick one primary. **Cursor is the chosen primary.** |
 
 **Available to any agent working this repo (all connected & verified 2026-09-08):**
 `gsap-skills` plugin (ScrollTrigger/pinning/timeline/performance guidance) · Magic UI MCP · 21st Magic MCP · Figma MCP (read-only, View seat) · Vercel MCP (deploy).
 
-**Frame pipeline is MANUAL** — Nano Banana Pro 2 via the Gemini app / AI Studio. No API key, no `.env.local`. Frames land in `public/frames/`.
-
-See `SETUP.md` for the exact step-by-step and the one paste-in prompt.
+See `SETUP.md` for environment status (already verified, nothing to redo).
 
 ---
 
 ## 10. Engineering Rules
 
-1. Read this file before building. 2. Keep the timeline centralized (never hard-code scene % across components). 3. Keep the film source behind `CinematicStage`. 4. Missing frames → labeled placeholder, never a fake claim. 5. Small targeted edits; no unrequested dependencies. 6. Fix TS/lint immediately; verify the site actually runs. 7. Preserve the art direction — never silently swap it for a generic look. 8. Ship the core scroll experience before any extra feature.
+1. Read this file before building. 2. Keep the timeline centralized (never hard-code scene % across components). 3. Keep the media source behind `CinematicStage`. 4. Missing media → labeled placeholder, never a fake claim. 5. Small targeted edits; no unrequested dependencies. 6. Fix TS/lint immediately; verify the site actually runs. 7. Preserve the art direction — never silently swap it for a generic look. 8. Ship the core scroll experience before any extra feature. 9. **Scroll axis is VERTICAL** (v3 — do not build the old horizontal mapping). 10. **The camera never moves** — this is a locked static shot; do not add pan/zoom/parallax to the footage itself.
 
 ---
 
 ## 11. Definition of Done — Rough Draft
 
-1. `npm run dev` runs clean. 2. Page pins and scroll scrubs the frame sequence smoothly. 3. Placeholder renders correctly with zero frames present. 4. Dropping real frames into `public/frames/` upgrades it with no code change. 5. Editorial scene labels fade in/out on the same progress. 6. Hero matches the reference three-quarter. 7. Ends in a premium BOOK CTA that links out. 8. Mobile scrolls and scrubs (reduced frame count ok). 9. No SaaS look, no invented assets.
+1. `npm run dev` runs clean. 2. Page pins and vertically scroll-scrubs `lambo-wash-01-scrub.mp4` smoothly, forward and backward, with no stutter. 3. Placeholder renders correctly with zero media present. 4. Dropping a real second clip upgrades the experience with no code change beyond the timeline config. 5. Trust panel and before/after sections render below the released scroll. 6. Hero matches the reference clip framing (static, side profile, driveway). 7. Ends in a premium BOOK CTA that links out. 8. Mobile scrolls and scrubs. 9. No SaaS look, no invented assets, no claim the car is "clean" when the only footage shown is dirty→foamed.
 
 <!-- BEGIN:nextjs-agent-rules -->
 

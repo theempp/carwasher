@@ -1,5 +1,11 @@
 # KICKOFF PROMPT — paste this once into Cursor/Antigravity agent (or a new Claude chat)
 
+> ⚠️ **SUPERSEDED 2026-09-08 (v3).** This was the v1 kickoff prompt for the canvas/still-frame
+> approach (Nano Banana Pro 2 stills, `frame-0001.jpg…`). The site is now built around a real
+> supplied video clip and a `<video>` scrub, not a frame sequence. **Use
+> `docs/CURSOR_REBUILD_PROMPT.md` instead** — it is the current one-shot prompt. Kept here only for
+> history.
+
 ---
 
 You are the lead engineer building a premium, cinematic, scroll-scrubbed website for a luxury car-detailing business. Work in this repo. **Read `claude.md` fully before writing anything** — it is the source of truth. Also skim `SETUP.md`.
