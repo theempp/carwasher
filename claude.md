@@ -9,6 +9,8 @@
 > This supersedes the previous v2 direction (horizontal continuous take, wash bay, Mineral Grey BMW,
 > monochrome MINERAL look) entirely. Authoritative docs:
 > - `docs/FILM_PIPELINE.md` — the film (owns the footage)
+> - `docs/FULL_FILM_DRAFT.md` — full-film 30s draft (unsigned; sharpen before GO)
+> - `docs/REMAINDER_BRIEF.md` — remainder take 2 (unsigned archive / remainder-only path)
 > - `docs/DESIGN_DIRECTION.md` — **ESTATE**, the new locked look (owns the palette/type)
 > - `docs/SCROLL_MECHANICS.md` — the motion (owns the scroll behaviour, now vertical)
 > - `docs/CURSOR_REBUILD_PROMPT.md` — the one-shot prompt to hand to Cursor
@@ -105,8 +107,8 @@ The experience is now **two phases**, not one long multi-beat film:
 
 1. **Pinned hero scrub (vertical, ~0–85% of the runway)** — today: one static-camera clip,
    `public/video/lambo-wash-01-scrub.mp4`, arrival → full foam. Clip 2 (frozen rinse) is **signed,
-   not wired**. The remaining beats are **one remainder video** (`docs/FILM_PIPELINE.md` §5), not
-   generated yet. Wax is not in the film.
+   not wired**. Remainder **take 2 is unsigned** on disk; the retake brief is
+   `docs/REMAINDER_BRIEF.md`. Wax is not in the film.
 2. **Normal scroll flow (released, ~85–100%)** — Trust panel ("THE BEST IN [REGION]." + reviews) →
    Before/After comparison → BOOK CTA. These are ordinary stacked sections, not pinned.
 
@@ -127,14 +129,21 @@ public/images/lambo-wash-01-last.jpg   last frame still — "after" fallback unt
 public/video/lambo-wash-02-rinse.mp4   signed clip 2 raw — DO NOT serve
 public/video/lambo-wash-02-rinse-scrub.mp4  signed clip 2 all-intra — not wired
 public/images/lambo-wash-02-last.jpg   clip 2 last frame — remainder start_image
+public/video/lambo-wash-03-remainder-take1.mp4  remainder take 1 raw — UNSIGNED archive, do not serve
+public/video/lambo-wash-03-remainder-scrub-take1.mp4  take 1 all-intra — unsigned archive
+public/video/lambo-wash-03-remainder-take2.mp4  remainder take 2 raw — UNSIGNED current reference, do not serve
+public/video/lambo-wash-03-remainder-scrub-take2.mp4  take 2 all-intra — unsigned
+public/images/lambo-wash-03-hold-take2.jpg      take 2 front portrait — comparison still (unsigned)
+public/images/lambo-wash-03-last-take2.jpg      take 2 last frame — overhead, car already gone
 ```
 
 - Never invent a media path. If `lambo-wash-01-scrub.mp4` is missing, `<CinematicStage>` must fall
   back to the still frames, and if those are missing too, render a clearly-labeled placeholder — same
   rule as v1/v2, unchanged.
-- Generated continuation is specified in `docs/FILM_PIPELINE.md` §5: clip 2 signed / not wired;
-  remainder is **one video**, not generated. Do not fake rinse, interior, or front-reveal frames on
-  the site. Comparison stays ARRIVAL / FULL COVERAGE until `lambo-wash-03-last.jpg` exists.
+- Generated continuation is specified in `docs/FILM_PIPELINE.md` §5 and `docs/REMAINDER_BRIEF.md`:
+  clip 2 signed / not wired; remainder take 2 unsigned (designer said all right; two tweaks next).
+  Do not fake rinse, interior, or front-reveal frames on the site. Comparison stays ARRIVAL /
+  FULL COVERAGE until a signed `lambo-wash-03-hold.jpg` exists.
 
 ---
 
@@ -177,7 +186,7 @@ public/
 | Tool | Role |
 |---|---|
 | **Claude** (this) | Architect. Owns this brief + the docs + the Cursor prompt. Can scaffold. |
-| **Higgsfield (`generate_video`, `seedance_2_5`)** | Generates the **remainder** as one video, chained off `lambo-wash-02-last.jpg` as `start_image`. See `docs/FILM_PIPELINE.md` §5. Do not regenerate clip 1 or signed clip 2. |
+| **Higgsfield (`generate_video`, `seedance_2_5`)** | Generates the **remainder** as one video, chained off `lambo-wash-02-last.jpg`. See `docs/FILM_PIPELINE.md` §5 and `docs/REMAINDER_BRIEF.md`. Do not regenerate clip 1 or signed clip 2. Take 2 is unsigned. |
 | **Cursor** *or* **Google Antigravity** | The builder IDE. ONE agent scaffolds and edits the Next.js app from `docs/CURSOR_REBUILD_PROMPT.md`. They are substitutes — pick one primary. **Cursor is the chosen primary.** |
 
 **Available to any agent working this repo (all connected & verified 2026-09-08):**
@@ -190,8 +199,8 @@ See `SETUP.md` for environment status (already verified, nothing to redo).
 ## 10. Engineering Rules
 
 1. Read this file before building. 2. Keep the timeline centralized (never hard-code scene % across components). 3. Keep the media source behind `CinematicStage`. 4. Missing media → labeled placeholder, never a fake claim. 5. Small targeted edits; no unrequested dependencies. 6. Fix TS/lint immediately; verify the site actually runs. 7. Preserve the art direction — never silently swap it for a generic look. 8. Ship the core scroll experience before any extra feature. 9. **Scroll axis is VERTICAL** (v3 — do not build the old horizontal mapping). 10. **Clip 1 camera never moves.** Do not add pan/zoom/parallax to the owner clip. Clip 2 is signed
-    and also frozen. The remainder has a designed path (`docs/FILM_PIPELINE.md` §5) — still no
-    accidental drift or empty coverage.
+    and also frozen. The remainder is a **drone path** (`docs/REMAINDER_BRIEF.md`) — no fur
+    interior, no rear-jerk, no parked freeze, no empty coverage.
 
 ---
 

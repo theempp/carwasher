@@ -103,9 +103,9 @@ structure:
    copy. Text only, no media dependency, so it's buildable immediately.
 2. **Before/After** — a comparison of `public/images/lambo-wash-01-first.jpg` (arrival) against
    `public/images/lambo-wash-01-last.jpg` (full foam coverage). **Label these honestly** — "ARRIVAL"
-  vs "FULL COVERAGE," not "before/after clean" — until the remainder’s front hold exists
-  (`docs/FILM_PIPELINE.md` §5). Swap the second image to `lambo-wash-03-last.jpg` and the labels
-  only then; don't fake the copy in the meantime.
+  vs "FULL COVERAGE," not "before/after clean" — until a signed remainder front hold exists
+  (`docs/FILM_PIPELINE.md` §5). Swap the second image to `lambo-wash-03-hold.jpg` (the hold,
+  not `lambo-wash-03-last.jpg`) and the labels only then; don't fake the copy in the meantime.
 
 Both sections use the same achromatic UI tokens as the chrome; only the film itself carries colour.
 
