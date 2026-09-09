@@ -84,7 +84,17 @@ body {
 }
 
 .film-scrub {
-  filter: contrast(1.04) saturate(1.05);
+  /* Own layer so the grain/scrim composite above it without repainting the
+     decode surface. Grade is baked into the encode — do not restore a filter. */
+  transform: translateZ(0);
+}
+
+.film-grain {
+  opacity: 0.025;
+  background-image: url("/images/film-grain.png");
+  background-repeat: repeat;
+  mix-blend-mode: overlay;
+  pointer-events: none;
 }
 
 /*

@@ -10,13 +10,19 @@ export const PIN_RUNWAY_VH = 13;
 
 export const FILM = {
   /**
-   * All-intra encode of the signed 25.33s trim (608 frames, 24fps, every frame
-   * a keyframe). The only file the <video> may request. Do not re-encode.
-   * The untrimmed 30s take has a hard cut at 25.33s — it is not served.
+   * 720p all-intra, grade baked, cut from the 30s master. Portrait / phone /
+   * small viewports. VideoScrubber picks this or `scrubDesktop` once at mount.
    */
-  scrub: "/video/lambo-wash-full-scrub-take1-trim.mp4",
+  scrub: "/video/lambo-wash-full-scrub-take1-trim-v2-grade.mp4",
+  /**
+   * 1080p all-intra of the signed upres, grade baked. Landscape desktop only.
+   * Never hand this to a phone — 1280 already exceeds what it can resolve.
+   */
+  scrubDesktop: "/video/lambo-wash-full-scrub-take1-trim-upres-1080-grade.mp4",
   /** Poster + arrival still: the frame the film opens on. */
   first: "/images/lambo-wash-full-start.jpg",
+  /** Matching 1080 arrival still for the desktop poster. */
+  firstDesktop: "/images/lambo-wash-full-start-upres-1080.jpg",
   /** Last frame of the trim: wet gloss black, near door flush. Not a reveal. */
   last: "/images/lambo-wash-full-trim-last.jpg",
   /** Seconds. Kept for reference only — playback reads video.duration. */

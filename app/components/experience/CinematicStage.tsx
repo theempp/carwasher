@@ -1,14 +1,22 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useCallback, useRef, useState } from "react";
 import { Navigation } from "@/app/components/Navigation";
 import { ScrollProgress } from "@/app/components/ScrollProgress";
 import { FrameScrubber } from "@/app/components/experience/FrameScrubber";
 import { LoadingScreen } from "@/app/components/experience/LoadingScreen";
 import { SceneOverlay } from "@/app/components/experience/SceneOverlay";
-import { VideoScrubber } from "@/app/components/experience/VideoScrubber";
 import { FILM } from "@/lib/scene/sceneTimeline";
 import { useScrollProgress } from "@/lib/utils/useScrollProgress";
+
+const VideoScrubber = dynamic(
+  () =>
+    import("@/app/components/experience/VideoScrubber").then(
+      (mod) => mod.VideoScrubber,
+    ),
+  { ssr: false },
+);
 
 type MediaMode = "video" | "stills" | "placeholder";
 
@@ -53,9 +61,10 @@ export function CinematicStage() {
       {mode === "placeholder" ? <FilmPlaceholder /> : null}
 
       {/* Station copy is composed into the shot — with no shot, only the
-          placeholder speaks. */}
+          placeholder speaks. Grain sits above the film, under the scrim. */}
       {mode === "placeholder" ? null : (
         <>
+          <div className="film-grain pointer-events-none absolute inset-0 z-[5]" />
           <div className="film-scrim pointer-events-none absolute inset-0 z-10" />
           <SceneOverlay progress={progress} />
           <ScrollProgress progress={progress} />
@@ -77,8 +86,11 @@ function FilmPlaceholder() {
         </p>
         <p className="mt-6 max-w-[26rem] text-[0.8rem] leading-relaxed tracking-[0.04em] text-muted">
           Missing{" "}
-          <span className="text-panel-fg">public{FILM.scrub}</span> and the
-          arrival / last-frame stills. Nothing here is a stand-in for footage.
+          <span className="text-panel-fg">public{FILM.scrub}</span>
+          {" / "}
+          <span className="text-panel-fg">public{FILM.scrubDesktop}</span> and
+          the arrival / last-frame stills. Nothing here is a stand-in for
+          footage.
         </p>
       </div>
     </div>
