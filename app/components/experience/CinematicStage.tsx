@@ -2,8 +2,6 @@
 
 import dynamic from "next/dynamic";
 import { useCallback, useRef, useState } from "react";
-import { Navigation } from "@/app/components/Navigation";
-import { ScrollProgress } from "@/app/components/ScrollProgress";
 import { FrameScrubber } from "@/app/components/experience/FrameScrubber";
 import { LoadingScreen } from "@/app/components/experience/LoadingScreen";
 import { SceneOverlay } from "@/app/components/experience/SceneOverlay";
@@ -40,6 +38,7 @@ export function CinematicStage() {
   return (
     <section
       ref={stageRef}
+      data-tone="dark"
       className="relative h-dvh w-full overflow-hidden bg-ink"
     >
       {mode === "video" ? (
@@ -67,10 +66,8 @@ export function CinematicStage() {
           <div className="film-grain pointer-events-none absolute inset-0 z-[5]" />
           <div className="film-scrim pointer-events-none absolute inset-0 z-10" />
           <SceneOverlay progress={progress} />
-          <ScrollProgress progress={progress} />
         </>
       )}
-      <Navigation />
       <LoadingScreen visible={!ready && mode !== "placeholder"} />
     </section>
   );

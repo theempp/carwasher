@@ -29,6 +29,14 @@ export const FILM = {
   firstDesktop: "/images/lambo-wash-full-start-upres-4k.jpg",
   /** Last frame of the trim: wet gloss black, near door flush. Not a reveal. */
   last: "/images/lambo-wash-full-trim-last.jpg",
+  /**
+   * 4K sources for the comparison loupe only. Pulled from the signed 4K
+   * archive (frame 0 and frame 607) so a 1:1 inspection shows real detail
+   * rather than magnifying the browser's own upscale of a 720/1024 still.
+   * Never served as film.
+   */
+  firstLoupe: "/images/lambo-wash-full-start-upres-4k.jpg",
+  lastLoupe: "/images/lambo-wash-full-trim-last-upres-4k.jpg",
   /** Seconds. Kept for reference only — playback reads video.duration. */
   duration: 25.333,
 } as const;

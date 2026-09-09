@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Archivo, Fraunces } from "next/font/google";
+import { MotionProvider } from "./components/MotionProvider";
 import { SmoothScroll } from "./components/SmoothScroll";
 import "./globals.css";
 
@@ -36,7 +37,7 @@ export default function RootLayout({
     >
       <body className="min-h-full bg-ink text-panel-fg">
         <SmoothScroll />
-        {children}
+        <MotionProvider>{children}</MotionProvider>
       </body>
     </html>
   );
