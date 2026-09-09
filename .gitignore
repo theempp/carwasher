@@ -38,3 +38,7 @@ next-env.d.ts
 public/video/lambo-wash-full-scrub-take1-trim-upres-1080.mp4
 public/video/lambo-wash-full-scrub-take1-trim-upres-1080-grade.mp4
 public/video/lambo-wash-full-scrub-take1-trim-v2.mp4
+# 4K all-intra is 143 MB — over GitHub's 100 MB hard limit. Served from Vercel Blob.
+public/video/lambo-wash-full-scrub-take1-trim-upres-4k-grade-crf21.mp4
+public/video/lambo-wash-full-take1-trim-upres-4k.mp4
+.env*

@@ -19,7 +19,7 @@ let cachedPick: FilmPick | null = null;
 
 /**
  * Choose the served file once, on the client, at mount.
- * Portrait / phone / small / low-DPR → 720p. Landscape desktop → 1080p.
+ * Portrait / phone / small / low-DPR → 720p. Landscape desktop → 4K.
  * This module is loaded with ssr:false so window is safe to read here.
  */
 function pickFilmVariant(): FilmPick {

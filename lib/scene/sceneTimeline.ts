@@ -15,15 +15,18 @@ export const FILM = {
    */
   scrub: "/video/lambo-wash-full-scrub-take1-trim-v2-grade.mp4",
   /**
-   * 1080p all-intra of the signed upres, grade baked, CRF 21. Landscape
-   * desktop only. Never hand this to a phone — 1280 already exceeds what
-   * it can resolve.
+   * 4K all-intra of the signed ByteDance pro upres, grade baked, CRF 21.
+   * Landscape desktop only. Never hand this to a phone — 1280 already
+   * exceeds what it can resolve.
+   * Hosted on Vercel Blob (143 MB, not in git). Local file stays on disk
+   * as an archive and is not the served path.
    */
-  scrubDesktop: "/video/lambo-wash-full-scrub-take1-trim-upres-1080-grade-crf21.mp4",
+  scrubDesktop:
+    "https://e3wa7nrfmryldhad.public.blob.vercel-storage.com/film/lambo-wash-full-scrub-take1-trim-upres-4k-grade-crf21.mp4",
   /** Poster + arrival still: the frame the film opens on. */
   first: "/images/lambo-wash-full-start.jpg",
-  /** Matching 1080 arrival still for the desktop poster. */
-  firstDesktop: "/images/lambo-wash-full-start-upres-1080.jpg",
+  /** Matching 4K arrival still for the desktop poster. */
+  firstDesktop: "/images/lambo-wash-full-start-upres-4k.jpg",
   /** Last frame of the trim: wet gloss black, near door flush. Not a reveal. */
   last: "/images/lambo-wash-full-trim-last.jpg",
   /** Seconds. Kept for reference only — playback reads video.duration. */

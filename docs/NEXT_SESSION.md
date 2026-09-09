@@ -1,8 +1,9 @@
-# Next Session — pick up here (written 2026-09-08, after the 1080 path shipped)
+# Next Session — pick up here (written 2026-09-08, after 4K Blob shipping)
 
-Steps 1–5 of v3.1 are done and wired. The site serves a grade-baked 720p re-cut to phones
-and the signed grade-baked 1080 upres (CRF 21, 45.9 MB) to landscape desktop. Grain is a
-static 2.5% tile. **Nothing Higgsfield has been spent since the signed 1080 job (0.51 cr).**
+Steps 1–5 of v3.1 are done. 4K is signed, encoded, and served to landscape desktop from
+Vercel Blob. Phones still get the grade-baked 720p. Grain is a static 2.5% tile.
+**No further Higgsfield spend.** 1080 job 0.51 cr · 4K pro job 20.27 cr. Do not fire
+1080, 2K, or 4K again.
 
 ## Read in this order
 1. `claude.md` — the v3.1 banner at the top, then §5, §6, §7, §10 (rules 11–14) and §11.
@@ -15,6 +16,22 @@ static 2.5% tile. **Nothing Higgsfield has been spent since the signed 1080 job 
 - **Straight to the upres** for desktop. Mobile stays 720p, always. Never hand an upres to a phone.
 - **Booking composer only.** The process ledger is cut. The page ends there.
 
+## Served pair (paths in `FILM` in `lib/scene/sceneTimeline.ts`)
+```
+phone / portrait / small
+  public/video/lambo-wash-full-scrub-take1-trim-v2-grade.mp4
+  608f, 24fps, 1280×720, all-intra, grade baked
+
+landscape desktop
+  FILM.scrubDesktop → Vercel Blob 4K
+  https://e3wa7nrfmryldhad.public.blob.vercel-storage.com/film/lambo-wash-full-scrub-take1-trim-upres-4k-grade-crf21.mp4
+  608f, 24fps, 3840×2160, all-intra, grade baked, CRF 21, 143 MB
+  Blob store: carwasher-film on Vercel project theempps-projects/carwasher
+```
+
+Variant pick is once at mount inside `VideoScrubber` (`ssr: false`). CSS filter is gone.
+P2 and P8 are done.
+
 ## Already on disk (do not overwrite, do not re-encode unless asked)
 ```
 public/video/lambo-wash-full-take1.mp4                         30s master — never serve
@@ -25,32 +42,36 @@ public/video/lambo-wash-full-scrub-take1-trim-v2-grade.mp4     SERVED on phone /
 public/video/lambo-wash-full-take1-trim-upres-1080.mp4         signed ByteDance 1080 raw (3 kf)
 public/video/lambo-wash-full-scrub-take1-trim-upres-1080.mp4   1080 all-intra, no grade — local archive, not in git
 public/video/lambo-wash-full-scrub-take1-trim-upres-1080-grade.mp4  CRF 20 archive — local, not in git
-public/video/lambo-wash-full-scrub-take1-trim-upres-1080-grade-crf21.mp4  SERVED on landscape desktop
+public/video/lambo-wash-full-scrub-take1-trim-upres-1080-grade-crf21.mp4  1080 served-until-4K — keep, not wired
+public/video/lambo-wash-full-take1-trim-upres-4k.mp4           signed ByteDance 4K pro raw (4 kf) — local, not in git
+public/video/lambo-wash-full-scrub-take1-trim-upres-4k-grade-crf21.mp4  4K all-intra archive — local, not in git; Blob is the served copy
 public/images/lambo-wash-full-start.jpg                       720 poster
-public/images/lambo-wash-full-start-upres-1080.jpg            1080 poster
+public/images/lambo-wash-full-start-upres-1080.jpg            1080 poster (unused)
+public/images/lambo-wash-full-start-upres-4k.jpg              4K desktop poster
 public/images/lambo-wash-full-trim-last.jpg                   comparison still (frame 607)
 public/images/film-grain.png                                  static 512 tile
 ```
 
 All served / archive scrubs are **608 frames / 608 keyframes / 25.333s**, last PTS 25.291667,
-hard cut at master frame 608 is not in the file. Variant pick lives in `VideoScrubber` (once at
-mount, `ssr: false`). Paths live in `FILM` in `lib/scene/sceneTimeline.ts`.
+hard cut at master frame 608 is not in the file.
 
-## Order of work (remaining)
-1. **NOW — ByteDance 4K cost quote only.** `generate_video` model `bytedance_video_upscale`,
-   `resolution: "4k"`, `fps: 24`, `preset: "common"`, `model_version: "standard"`,
-   `get_cost: true`, `use_unlim: false`, `count: 1`. Do **not** upload. Do **not** fire the job.
-   Dedicated `upscale_video` has no `get_cost` — quote through `generate_video` like the 1080
-   (0.51 cr at 25.333s) and 2K (1.00 cr at 25s) preflights. Show the number. Wait for typed **GO**.
-   Uploading sends the signed trim to Higgsfield — say so before doing it.
-2. If GO: one 4K job on the signed 720 trim (`lambo-wash-full-take1-trim.mp4`), new filename,
-   owner signs frames against the 1080. If the look changed, bin it. Then all-intra + bake +
-   wire as `FILM.scrubDesktop` only. Mobile stays 720.
-3. Fix P1–P8 (`QUALITY_AND_PERF.md` §5). P2 (CSS filter) and P8 (grain/scrim layering) are done.
-   **P1 (one seek in flight) is the highest-value remaining fix.**
-4. Booking composer + Navigation / ScrollProgress / TrustPanel / BeforeAfter upgrades, all
-   honoring `prefers-reduced-motion`.
-5. Full headless-Chrome regression on both the desktop and iPhone-class paths.
+## Order of work (remaining) — plan first, do not generate video
+1. **P1 — one seek in flight** (`QUALITY_AND_PERF.md` §5). Highest-value remaining fix.
+   `seekVideo` in `lib/utils/useScrollProgress.ts` assigns `currentTime` on every rAF
+   where delta > 0.003. Skip while `video.seeking`, hold pending target, apply on `seeked`.
+2. **P6 — loading readout.** Desktop now fetches 143 MB with `preload="auto"`. Give
+   `LoadingScreen` a real progress readout. Measure before changing preload.
+3. **P3** `ScrollTrigger.config({ ignoreMobileResize: true })` — pin jump on iOS URL bar.
+4. **P4** dead `scrollerProxy` + probable double `ScrollTrigger.update` in `lib/animation/lenis.ts`.
+5. **P5** two owners for one lenis instance (`SmoothScroll` vs `useScrollProgress`).
+6. **P7** iOS memory ceiling — mitigation is the variant split; never hand 4K to a phone.
+7. Booking composer + Navigation / ScrollProgress / TrustPanel / BeforeAfter upgrades,
+   all honoring `prefers-reduced-motion`. Spec: `docs/BOOKING_COMPOSER.md`.
+8. Full headless-Chrome regression on desktop (Blob 4K) and iPhone-class (720) paths.
+
+P2 (CSS filter) and P8 (grain/scrim) are done. Do not regenerate footage. Do not re-encode
+unless asked. Do not deploy unless asked. A Vercel project exists (`carwasher`) and is linked;
+the site itself has not been deployed this session.
 
 ## Standing constraints
 Branch `cursor/nextjs-agent-rules`, never `main`. Vertical only, position-mapped, damping k=0.09,
