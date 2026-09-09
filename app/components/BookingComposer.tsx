@@ -45,7 +45,7 @@ export function BookingComposer() {
   return (
     <section id="book" data-tone="light" className="bg-paper text-paper-fg">
       <motion.div
-        className="mx-auto flex min-h-[78dvh] max-w-[92rem] flex-col justify-end px-[6vw] pt-24 pb-16 md:pb-20"
+        className="mx-auto flex min-h-[100dvh] max-w-[92rem] flex-col justify-end px-[6vw] pt-24 pb-16 md:pb-20"
         style={{ paddingBottom: "max(4rem, env(safe-area-inset-bottom))" }}
         initial={{ opacity: 0, y: 28 }}
         whileInView={{ opacity: 1, y: 0 }}

@@ -16,12 +16,30 @@ let onScroll: (() => void) | null = null;
  * Teardown happens only when the last owner leaves, whatever the effect order.
  */
 let owners = 0;
+let stUpdateMs = 0;
+let stUpdateN = 0;
+
+const DEV = process.env.NODE_ENV !== "production";
+
+function publishRuntime() {
+  if (!DEV || typeof window === "undefined") return;
+  window.__cineRuntime = {
+    lenisOwners: owners,
+    lenisAlive: Boolean(lenis),
+    ticker: Boolean(ticker),
+    stUpdateCount: stUpdateN,
+    stUpdateMeanMs: stUpdateN ? stUpdateMs / stUpdateN : 0,
+  };
+}
 
 export function ensureSmoothScroll(): Lenis | null {
   if (typeof window === "undefined") return null;
 
   owners += 1;
-  if (lenis) return lenis;
+  if (lenis) {
+    publishRuntime();
+    return lenis;
+  }
 
   lenis = new Lenis({
     autoRaf: false,
@@ -46,7 +64,19 @@ export function ensureSmoothScroll(): Lenis | null {
    * touching it.
    */
   onScroll = () => {
-    ScrollTrigger.update();
+    if (DEV) {
+      const t0 = performance.now();
+      ScrollTrigger.update();
+      stUpdateMs += performance.now() - t0;
+      stUpdateN += 1;
+      const runtime = window.__cineRuntime;
+      if (runtime) {
+        runtime.stUpdateCount = stUpdateN;
+        runtime.stUpdateMeanMs = stUpdateMs / stUpdateN;
+      }
+    } else {
+      ScrollTrigger.update();
+    }
   };
   lenis.on("scroll", onScroll);
 
@@ -56,12 +86,16 @@ export function ensureSmoothScroll(): Lenis | null {
   gsap.ticker.add(ticker);
   gsap.ticker.lagSmoothing(0);
 
+  publishRuntime();
   return lenis;
 }
 
 export function releaseSmoothScroll() {
   if (owners > 0) owners -= 1;
-  if (owners > 0 || !lenis) return;
+  if (owners > 0 || !lenis) {
+    publishRuntime();
+    return;
+  }
 
   if (ticker) gsap.ticker.remove(ticker);
   gsap.ticker.lagSmoothing(500);
@@ -70,4 +104,5 @@ export function releaseSmoothScroll() {
   lenis = null;
   ticker = null;
   onScroll = null;
+  publishRuntime();
 }

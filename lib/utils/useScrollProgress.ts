@@ -39,6 +39,13 @@ type ScrubStats = {
 declare global {
   interface Window {
     __scrubStats?: ScrubStats;
+    __cineRuntime?: {
+      lenisOwners: number;
+      lenisAlive: boolean;
+      ticker: boolean;
+      stUpdateCount: number;
+      stUpdateMeanMs: number;
+    };
   }
 }
 

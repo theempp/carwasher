@@ -15,18 +15,32 @@ export const FILM = {
    */
   scrub: "/video/lambo-wash-full-scrub-take1-trim-v2-grade.mp4",
   /**
-   * 4K all-intra of the signed ByteDance pro upres, grade baked, CRF 21.
-   * Landscape desktop only. Never hand this to a phone — 1280 already
-   * exceeds what it can resolve.
-   * Hosted on Vercel Blob (143 MB, not in git). Local file stays on disk
-   * as an archive and is not the served path.
+   * 4K all-intra of the signed ByteDance pro upres, grade baked, CRF 21,
+   * remuxed with moov at the start. Landscape desktop only. Never hand
+   * this to a phone — 1280 already exceeds what it can resolve.
+   *
+   * Served locally (gitignored, 143 MB). The previous Vercel Blob object
+   * advertised Accept-Ranges but closed Range requests reported a file
+   * size equal to the range length (multipart ETag …-18), so Chrome's
+   * moov probe and any mid-scrub seek 416'd and VideoScrubber fell back
+   * to 720p. Do not point this back at that Blob URL until Range is
+   * verified: `bytes=0-1023` must return `0-1023/149832707`, not `/1024`.
    */
   scrubDesktop:
-    "https://e3wa7nrfmryldhad.public.blob.vercel-storage.com/film/lambo-wash-full-scrub-take1-trim-upres-4k-grade-crf21.mp4",
+    "/video/lambo-wash-full-scrub-take1-trim-upres-4k-grade-crf21-faststart.mp4",
+  /**
+   * 1080 all-intra, grade baked, CRF 21. In git — this is what Vercel
+   * actually serves on desktop when the gitignored 4K is not in the
+   * deployment. VideoScrubber falls here after a 4K miss, then to 720p.
+   */
+  scrub1080:
+    "/video/lambo-wash-full-scrub-take1-trim-upres-1080-grade-crf21.mp4",
   /** Poster + arrival still: the frame the film opens on. */
   first: "/images/lambo-wash-full-start.jpg",
   /** Matching 4K arrival still for the desktop poster. */
   firstDesktop: "/images/lambo-wash-full-start-upres-4k.jpg",
+  /** 1080 arrival still, used when the desktop path has fallen back. */
+  first1080: "/images/lambo-wash-full-start-upres-1080.jpg",
   /** Last frame of the trim: wet gloss black, near door flush. Not a reveal. */
   last: "/images/lambo-wash-full-trim-last.jpg",
   /**

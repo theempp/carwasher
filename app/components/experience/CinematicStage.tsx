@@ -23,17 +23,38 @@ export function CinematicStage() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const progress = useScrollProgress(stageRef, { videoRef });
   const [mode, setMode] = useState<MediaMode>("video");
-  const [ready, setReady] = useState(false);
+  const [firstFrame, setFirstFrame] = useState(false);
+  const [settled, setSettled] = useState(false);
+  const [waiting, setWaiting] = useState(false);
+  const [loadProgress, setLoadProgress] = useState<number | null>(null);
 
-  const handleReady = useCallback(() => setReady(true), []);
+  const handleFirstFrame = useCallback(() => setFirstFrame(true), []);
+  const handleSettled = useCallback(() => setSettled(true), []);
+  const handleWaiting = useCallback((next: boolean) => setWaiting(next), []);
+  const handleBufferProgress = useCallback((next: number | null) => {
+    setLoadProgress(next);
+  }, []);
   const handleVideoFail = useCallback(() => {
     setMode("stills");
-    setReady(false);
+    setFirstFrame(false);
+    setSettled(false);
+    setWaiting(false);
+    setLoadProgress(null);
+  }, []);
+  const handleStillsReady = useCallback(() => {
+    setFirstFrame(true);
+    setSettled(true);
+    setWaiting(false);
   }, []);
   const handleStillsFail = useCallback(() => {
     setMode("placeholder");
-    setReady(true);
+    setFirstFrame(true);
+    setSettled(true);
+    setWaiting(false);
   }, []);
+
+  const showLoading =
+    mode !== "placeholder" && (!firstFrame || waiting || !settled);
 
   return (
     <section
@@ -44,7 +65,10 @@ export function CinematicStage() {
       {mode === "video" ? (
         <VideoScrubber
           videoRef={videoRef}
-          onReady={handleReady}
+          onFirstFrame={handleFirstFrame}
+          onBufferProgress={handleBufferProgress}
+          onSettled={handleSettled}
+          onWaiting={handleWaiting}
           onFail={handleVideoFail}
         />
       ) : null}
@@ -52,7 +76,7 @@ export function CinematicStage() {
       {mode === "stills" ? (
         <FrameScrubber
           progress={progress}
-          onReady={handleReady}
+          onReady={handleStillsReady}
           onFail={handleStillsFail}
         />
       ) : null}
@@ -68,7 +92,10 @@ export function CinematicStage() {
           <SceneOverlay progress={progress} />
         </>
       )}
-      <LoadingScreen visible={!ready && mode !== "placeholder"} />
+      <LoadingScreen
+        visible={showLoading}
+        progress={waiting && loadProgress == null ? null : loadProgress}
+      />
     </section>
   );
 }
