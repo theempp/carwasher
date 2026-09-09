@@ -23,7 +23,10 @@
 > source (SSIM 0.9937) — **the master is 1280×720 and we upscale it 2.5× on a retina desktop.**
 > ⚠️ **UPDATE 2026-09-08 (late) — v3.1.1.** Phone hero was black (moov-at-end + no real poster).
 > Desktop interior hitch was 4K all-intra. Served pair is now **faststart 720 (phone)** and
-> **faststart 1080 (desktop)**. 4K is loupe stills only. `SEEK_EPSILON` is 0.02. Pickup:
+> **faststart 1080 (desktop)**. 4K is loupe stills only. `SEEK_EPSILON` is 0.02.
+> ⚠️ **UPDATE 2026-09-09 — v3.1.2.** Faststart was on production; iOS was still black because
+> GSAP `pin: true` writes `transform: matrix(1,0,0,1,0,0)` onto the video's ancestor.
+> Film is a **fixed layer** + empty runway. Do not restore `pin` on the film. Pickup:
 > `docs/NEXT_SESSION.md`.
 
 ---
@@ -58,10 +61,12 @@ encoded (every frame a keyframe), whose `currentTime` is driven directly by damp
   needs to be stills-only (e.g. a static before/after comparison) but is no longer the primary
   mechanism for the hero.
 
-**One pinned full-bleed stage, normal document flow below it.** The hero clip is pinned
-(`position: fixed`) for a vertical scroll runway; once the clip finishes scrubbing, the page releases
-into ordinary vertical scroll for the trust panel, before/after section, and CTA. GSAP ScrollTrigger
-owns the pin + progress mapping.
+**One full-bleed stage, normal document flow below it.** The hero clip is `position: fixed`
+for a vertical scroll runway; Trust / comparison / booking sit in a `relative z-10` stack and
+cover it as they arrive. GSAP ScrollTrigger maps runway scroll → progress only — **it does not
+`pin` the film.** Pinning writes a transform onto the trigger, and iOS Safari then paints
+`<video>` black (even an identity matrix). Do not put `pin: true` or `anticipatePin` back on
+any ancestor of the `<video>`.
 
 ---
 
@@ -247,6 +252,8 @@ See `SETUP.md` for environment status (already verified, nothing to redo).
     buy zero pixels and risk the tab being reaped.
 14. **Preflight every paid generation.** `get_cost: true`, show the owner the number, wait for a
     typed **GO**. Say so *before* uploading footage to an external service, not after.
+15. **Never GSAP-pin an ancestor of `<video>`.** iOS Safari composites the decode surface black
+    inside any transformed parent. Film = `.film-stage` (fixed, no transform) + empty runway.
 
 ---
 
