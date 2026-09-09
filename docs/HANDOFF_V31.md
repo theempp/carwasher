@@ -1,7 +1,8 @@
-# v3.1 handoff — what is left (paste this into Cursor)
+# v3.1 handoff — archive
 
-> Written 2026-09-08. Everything below is the **remainder**. Steps 1, 3, 4a, 5 and all of 7 are
-> already implemented and pass `tsc --noEmit` and `eslint`. Do not redo them.
+> Superseded 2026-09-08 night. Tasks A/B and C1/C4 are done. Current served pair, remaining
+> work, and pickup prompt live in `docs/NEXT_SESSION.md`. Do not re-implement anything below.
+> Left as a record of the P6 / C-item reasoning.
 
 ## Read first
 `claude.md` · `docs/QUALITY_AND_PERF.md` (§4 budget, §5 P1–P8, §6 verification) · `docs/NEXT_SESSION.md`.

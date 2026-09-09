@@ -11,9 +11,7 @@ type VideoScrubberProps = {
   onBufferProgress?: (progress: number | null) => void;
   /**
    * Initial buffer window has stopped growing (or covers the duration).
-   * Not a promise that every timestamp is in RAM — Chrome will not fully
-   * buffer a paused 143 MB all-intra. Seek holes re-open the readout via
-   * onWaiting.
+   * Seek holes re-open the readout via onWaiting.
    */
   onSettled?: () => void;
   onWaiting?: (waiting: boolean) => void;
@@ -31,6 +29,14 @@ let cachedPick: FilmPick | null = null;
 const SAMPLE_MS = 250;
 const SETTLE_SAMPLES = 2;
 
+function isAppleTouch() {
+  return (
+    /iP(hone|ad|od)/.test(navigator.userAgent) ||
+    navigator.platform === "iPad" ||
+    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)
+  );
+}
+
 function isTabletClass(): boolean {
   // iPad + trackpad reports pointer:fine, so coarse alone is not enough.
   const coarse = window.matchMedia("(pointer: coarse)").matches;
@@ -43,8 +49,7 @@ function isTabletClass(): boolean {
 /**
  * Choose the served file once, on the client, at mount.
  * Portrait / phone / small / tablet / low-DPR → 720p.
- * Landscape desktop with a fine pointer → 4K.
- * This module is loaded with ssr:false so window is safe to read here.
+ * Landscape desktop with a fine pointer → 1080.
  */
 function pickFilmVariant(): FilmPick {
   if (cachedPick) return cachedPick;
@@ -87,10 +92,18 @@ function bufferedFromStart(video: HTMLVideoElement): number | null {
   }
 }
 
-/** Brief play/pause primes seeking without leaving the clip running. */
-function primeSeeking(video: HTMLVideoElement) {
-  const settle = () => video.pause();
-  void video.play().then(settle).catch(settle);
+function requestPaint(
+  video: HTMLVideoElement,
+  onPaint: () => void,
+) {
+  const rvfc = (
+    video as HTMLVideoElement & {
+      requestVideoFrameCallback?: (cb: () => void) => number;
+    }
+  ).requestVideoFrameCallback;
+  if (typeof rvfc === "function") {
+    rvfc.call(video, () => onPaint());
+  }
 }
 
 export function VideoScrubber({
@@ -103,42 +116,65 @@ export function VideoScrubber({
 }: VideoScrubberProps) {
   const pick = pickFilmVariant();
   const [override, setOverride] = useState<FilmPick | null>(null);
-  const tried1080 = useRef(false);
+  const [frameUp, setFrameUp] = useState(false);
   const tried720 = useRef(false);
+  const painted = useRef(false);
+  const appleTouch = useRef(isAppleTouch());
+  const onFirstFrameRef = useRef(onFirstFrame);
+  const onFailRef = useRef(onFail);
   const active = override ?? pick;
 
+  onFirstFrameRef.current = onFirstFrame;
+  onFailRef.current = onFail;
+
+  const markPainted = () => {
+    if (painted.current) return;
+    painted.current = true;
+    setFrameUp(true);
+  };
+
+  const tryPaint = (video: HTMLVideoElement) => {
+    onFirstFrameRef.current?.();
+    requestPaint(video, markPainted);
+    video.addEventListener("playing", markPainted, { once: true });
+    void video
+      .play()
+      .then(() => video.pause())
+      .catch(() => {
+        // iOS often rejects play() until a gesture. The poster image stays up.
+      });
+  };
+
   const stepDown = () => {
-    if (active.src === FILM.scrubDesktop && !tried1080.current) {
-      tried1080.current = true;
-      setOverride({ src: FILM.scrub1080, poster: FILM.first1080 });
-      return;
-    }
-    if (
-      (active.src === FILM.scrubDesktop || active.src === FILM.scrub1080) &&
-      !tried720.current
-    ) {
+    if (active.src !== FILM.scrub && !tried720.current) {
       tried720.current = true;
+      painted.current = false;
+      setFrameUp(false);
       setOverride({ src: FILM.scrub, poster: FILM.first });
       return;
     }
-    onFail?.();
+    onFailRef.current?.();
   };
 
-  // A missing file errors long before hydration, so the JSX handlers below
-  // never see it. Re-read the element's own state once on mount.
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
+
+    video.setAttribute("playsinline", "true");
+    video.setAttribute("webkit-playsinline", "true");
+    video.muted = true;
+    video.defaultMuted = true;
 
     if (video.error || video.networkState === video.NETWORK_NO_SOURCE) {
       stepDown();
       return;
     }
     if (video.readyState >= 2) {
-      onFirstFrame?.();
-      primeSeeking(video);
+      tryPaint(video);
     }
-  }, [videoRef, onFirstFrame, onFail, active]);
+    // stepDown/tryPaint close over the current src; re-run when it changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- src is the only mount key we want
+  }, [videoRef, active.src]);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -195,30 +231,63 @@ export function VideoScrubber({
     };
   }, [videoRef, active.src, onBufferProgress, onSettled, onWaiting]);
 
+  // iOS will not paint a frame (and may reject seeks) until play() runs
+  // inside a user gesture. One pointerdown unlocks the rest of the session.
+  useEffect(() => {
+    if (!appleTouch.current) return;
+    const video = videoRef.current;
+    if (!video) return;
+
+    const unlock = () => {
+      requestPaint(video, markPainted);
+      void video
+        .play()
+        .then(() => {
+          video.pause();
+          markPainted();
+        })
+        .catch(() => {});
+    };
+    window.addEventListener("pointerdown", unlock, { once: true, passive: true });
+    return () => window.removeEventListener("pointerdown", unlock);
+  }, [videoRef, active.src]);
+
   return (
-    <video
-      ref={videoRef}
-      className="film-scrub film-fit absolute inset-0 h-full w-full"
-      src={active.src}
-      poster={active.poster}
-      muted
-      playsInline
-      preload="auto"
-      controls={false}
-      disablePictureInPicture
-      onLoadedData={(event) => {
-        onFirstFrame?.();
-        primeSeeking(event.currentTarget);
-      }}
-      onWaiting={(event) => {
-        if (event.currentTarget.readyState < 2) return;
-        onWaiting?.(true);
-      }}
-      onCanPlay={() => onWaiting?.(false)}
-      onError={() => {
-        stepDown();
-      }}
-      aria-hidden
-    />
+    <>
+      <video
+        ref={videoRef}
+        className="film-scrub film-fit absolute inset-0 z-0 h-full w-full"
+        src={active.src}
+        poster={active.poster}
+        muted
+        playsInline
+        preload="auto"
+        controls={false}
+        disablePictureInPicture
+        onLoadedData={(event) => {
+          tryPaint(event.currentTarget);
+        }}
+        onWaiting={(event) => {
+          if (event.currentTarget.readyState < 2) return;
+          onWaiting?.(true);
+        }}
+        onCanPlay={() => onWaiting?.(false)}
+        onError={() => {
+          stepDown();
+        }}
+        aria-hidden
+      />
+      {frameUp ? null : (
+        // Native <video poster> often vanishes on iOS as soon as src is set,
+        // and a black decoder surface would cover an image behind it. Keep a
+        // real still on top until a decoded frame exists.
+        <img
+          src={active.poster}
+          alt=""
+          className="film-fit pointer-events-none absolute inset-0 z-[1] h-full w-full"
+          draggable={false}
+        />
+      )}
+    </>
   );
 }

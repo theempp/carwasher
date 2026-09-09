@@ -85,8 +85,15 @@ body {
 
 .film-scrub {
   /* Own layer so the grain/scrim composite above it without repainting the
-     decode surface. Grade is baked into the encode — do not restore a filter. */
+     decode surface. Grade is baked into the encode — do not restore a filter.
+     iOS Safari paints a black surface when a 3D transform is on <video>. */
   transform: translateZ(0);
+}
+
+@media (pointer: coarse), (hover: none) {
+  .film-scrub {
+    transform: none;
+  }
 }
 
 .film-grain {

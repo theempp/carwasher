@@ -21,12 +21,10 @@
 > ⚠️ **UPDATE 2026-09-08 (night) — v3.1. Direction unchanged; quality, performance and the ending are.**
 > The film's softness was measured, not guessed: the all-intra encode is near-transparent to its
 > source (SSIM 0.9937) — **the master is 1280×720 and we upscale it 2.5× on a retina desktop.**
-> Owner decisions this session: (a) **go straight to the Higgsfield upres** for the desktop path,
-> (b) **booking composer only** as new page content — the process ledger is cut, and (c) **mobile and
-> desktop both smooth and fast, no glitches, is a shipping gate.** New authoritative docs:
-> - `docs/QUALITY_AND_PERF.md` — **owns image quality, the variant split, and the performance budget**
-> - `docs/BOOKING_COMPOSER.md` — owns the page's ending and the v3.1 component upgrades
-> Nothing in either has been executed yet. Sections 5–7 and 10 below are amended to match.
+> ⚠️ **UPDATE 2026-09-08 (late) — v3.1.1.** Phone hero was black (moov-at-end + no real poster).
+> Desktop interior hitch was 4K all-intra. Served pair is now **faststart 720 (phone)** and
+> **faststart 1080 (desktop)**. 4K is loupe stills only. `SEEK_EPSILON` is 0.02. Pickup:
+> `docs/NEXT_SESSION.md`.
 
 ---
 
@@ -117,11 +115,13 @@ scroll-reveals everywhere. **Scroll damping is mandatory — see `docs/SCROLL_ME
 
 The experience is now **two phases**, not one long multi-beat film:
 
-1. **Pinned hero scrub (vertical, ~0–85% of the runway)** — since 2026-09-08 (evening) the hero is
-   the signed **25.33s full-film trim**, `public/video/lambo-wash-full-scrub-take1-trim.mp4`:
-   foam → rinse → in through the near door → interior → back out and the door closes flush.
-   `PIN_RUNWAY_VH = 13`. Clip 1, clip 2 and both remainder takes stay on disk and are no longer
-   served. Wax is not in the film.
+1. **Pinned hero scrub (vertical, ~0–85% of the runway)** — the hero is
+   the signed **25.33s full-film trim**, served as the faststart pair in `FILM`
+   (`-v2-grade-faststart.mp4` on phone, `-upres-1080-grade-crf21-faststart.mp4`
+   on desktop): foam → rinse → in through the near door → interior → back out
+   and the door closes flush. `PIN_RUNWAY_VH = 13`. Clip 1, clip 2 and both
+   remainder takes stay on disk and are no longer served. Wax is not in the film.
+   4K is loupe stills only — never the playhead.
 2. **Normal scroll flow (released, ~85–100%)** — Trust panel ("THE STANDARD ON YOUR STREET." — placeholder copy) →
    Before/After comparison → **Request a time** (the booking composer, `docs/BOOKING_COMPOSER.md`).
    These are ordinary stacked sections, not pinned. The composer replaces the old dead `#book`
@@ -136,10 +136,12 @@ rather than becoming a new page section.
 ## 6. Media Assets
 
 ```
-public/video/lambo-wash-full-scrub-take1-trim.mp4  25.33s all-intra trim (608 frames) — SERVED TODAY
-  ^ v3.1 will re-cut this from the 30s master (drops a lossy generation) as -v2.mp4, and may
-    add a 1080p upres variant for desktop only. New filenames, never overwrite. Mobile stays
-    720p — a phone cannot resolve more. See docs/QUALITY_AND_PERF.md §1, §3.
+public/video/lambo-wash-full-scrub-take1-trim-v2-grade-faststart.mp4
+  SERVED on phone / portrait / tablet — 720p all-intra, grade baked, moov at start
+public/video/lambo-wash-full-scrub-take1-trim-upres-1080-grade-crf21-faststart.mp4
+  SERVED on landscape desktop — 1080 all-intra, grade baked, moov at start
+  (4K all-intra melts the decoder on the interior beat; 4K is loupe stills only)
+public/video/lambo-wash-full-scrub-take1-trim.mp4  25.33s all-intra trim (608 frames) — archive, do not serve
 public/images/lambo-wash-full-start.jpg            poster + ARRIVAL comparison still
 public/images/lambo-wash-full-trim-last.jpg        frame 607 — wet gloss black, near door flush (comparison)
 public/video/lambo-wash-full-take1-trim.mp4        raw trim — DO NOT serve
@@ -164,7 +166,7 @@ public/images/lambo-wash-03-hold-take2.jpg      take 2 front portrait — compar
 public/images/lambo-wash-03-last-take2.jpg      take 2 last frame — overhead, car already gone
 ```
 
-- Never invent a media path. If `lambo-wash-full-scrub-take1-trim.mp4` is missing, `<CinematicStage>` must fall
+- Never invent a media path. If the current `FILM.scrub` / `FILM.scrubDesktop` files are missing, `<CinematicStage>` must fall
   back to the still frames, and if those are missing too, render a clearly-labeled placeholder — same
   rule as v1/v2, unchanged.
 - Generated continuation is specified in `docs/FILM_PIPELINE.md` §5 and `docs/REMAINDER_BRIEF.md`:

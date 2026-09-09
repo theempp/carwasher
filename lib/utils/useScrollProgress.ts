@@ -14,12 +14,12 @@ type UseScrollProgressOptions = {
 };
 
 /**
- * Seconds. One frame of the 24fps film is 41.7ms, so this is ~7% of a frame —
- * far finer than anything that can change which frame is on screen. Raising it
- * to half a frame would cut the seek count sharply but quantizes the playhead,
- * which is a change in scroll feel. Left fine on purpose.
+ * Seconds. One frame of the 24fps film is 41.7ms. Half a frame is the
+ * finest change that can land on a different picture; seeking finer than
+ * that only multiplies decoder work, which showed up as hitching on the
+ * interior beat. C1 was gated as a feel change — this is the smoothness fix.
  */
-const SEEK_EPSILON = 0.003;
+const SEEK_EPSILON = 0.02;
 
 /**
  * ms. iOS can drop `seeked` entirely when the decoder is under pressure or the
