@@ -20,7 +20,7 @@ const archivo = Archivo({
 });
 
 export const metadata: Metadata = {
-  title: "[BRAND]",
+  title: "CtLuxuryDetails",
   description:
     "A scroll-controlled film of one car being washed on a private estate driveway.",
 };

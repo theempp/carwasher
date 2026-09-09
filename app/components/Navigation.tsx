@@ -58,7 +58,7 @@ export function Navigation() {
           href="#top"
           className="type-display pointer-events-auto text-[clamp(1.05rem,1.8vw,1.35rem)]"
         >
-          [BRAND]
+          CtLuxuryDetails
         </a>
         <nav>
           <a
