@@ -15,20 +15,30 @@ export const FILM = {
    */
   scrub: "/video/lambo-wash-full-scrub-take1-trim-v2-grade-faststart.mp4",
   /**
-   * 1080 all-intra, grade baked, CRF 21, moov at the start. Landscape
-   * desktop. This is the highest quality that still scrubs: 4K all-intra
-   * (3840×2160 I-frames) melts the decoder on the interior beat. 4K stays
-   * on disk for the loupe stills only — never the playhead.
+   * 4K all-intra of the signed ByteDance pro upres, grade baked, CRF 21,
+   * remuxed with moov at the start. Landscape desktop, localhost only.
+   * Gitignored (143 MB). Never hand this to a phone.
    */
   scrubDesktop:
-    "/video/lambo-wash-full-scrub-take1-trim-upres-1080-grade-crf21-faststart.mp4",
-  /** Alias of `scrubDesktop` — kept so a future 1080 miss can still step down. */
+    "/video/lambo-wash-full-scrub-take1-trim-upres-4k-grade-crf21-faststart.mp4",
+  /**
+   * Same 4K encode on Vercel Blob (moov at the end). Production / preview
+   * desktop path — Range re-verified 2026-09-09 (`0-1023/149832707`, mid
+   * and moov tail 206). Interior I-frames can hitch; 1080 remains the
+   * next step-down. Never hand this to a phone.
+   */
+  scrubDesktopRemote:
+    "https://e3wa7nrfmryldhad.public.blob.vercel-storage.com/film/lambo-wash-full-scrub-take1-trim-upres-4k-grade-crf21.mp4",
+  /**
+   * 1080 all-intra, grade baked, CRF 21, moov at the start. In git —
+   * fallback when 4K misses (local file absent and Blob errors).
+   */
   scrub1080:
     "/video/lambo-wash-full-scrub-take1-trim-upres-1080-grade-crf21-faststart.mp4",
   /** Poster + arrival still: the frame the film opens on. */
   first: "/images/lambo-wash-full-start.jpg",
-  /** Matching 1080 arrival still for the desktop poster. */
-  firstDesktop: "/images/lambo-wash-full-start-upres-1080.jpg",
+  /** Matching 4K arrival still for the desktop poster. */
+  firstDesktop: "/images/lambo-wash-full-start-upres-4k.jpg",
   first1080: "/images/lambo-wash-full-start-upres-1080.jpg",
   /** Last frame of the trim: wet gloss black, near door flush. Not a reveal. */
   last: "/images/lambo-wash-full-trim-last.jpg",

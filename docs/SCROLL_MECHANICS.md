@@ -143,9 +143,10 @@ and so uses the default (window) and never consults it — meanwhile `lenis.on("
 `ScrollTrigger.update()` on top of ScrollTrigger's own listener. Verify, then own the lifecycle in
 one place and remove the dead path so update runs once per frame.
 
-**Trap 6 — never swap `src` mid-session.** v3.1 serves a 720p file to portrait/mobile and a 1080p
-upres to desktop landscape. Choose **once, at mount**. Changing `src` later resets `currentTime` and
-drops the playhead on the floor.
+**Trap 6 — never swap `src` mid-session.** v3.1.3 serves a 720p file to portrait/mobile and a 4K
+upres to desktop landscape (local faststart / Blob remote). Choose **once, at mount**. Changing `src`
+later resets `currentTime` and drops the playhead on the floor. A 404 step-down (4K → 1080 → 720) is
+the exception — that is a miss, not a variant swap.
 
 ---
 

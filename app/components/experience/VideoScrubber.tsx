@@ -46,10 +46,27 @@ function isTabletClass(): boolean {
   return coarse || iPadOS;
 }
 
+function isLocalDev() {
+  const { hostname } = window.location;
+  return hostname === "localhost" || hostname === "127.0.0.1";
+}
+
+function desktopFilm(): FilmPick {
+  return {
+    src: isLocalDev() ? FILM.scrubDesktop : FILM.scrubDesktopRemote,
+    poster: FILM.firstDesktop,
+  };
+}
+
+function isDesktopFourK(src: string) {
+  return src === FILM.scrubDesktop || src === FILM.scrubDesktopRemote;
+}
+
 /**
  * Choose the served file once, on the client, at mount.
  * Portrait / phone / small / tablet / low-DPR → 720p.
- * Landscape desktop with a fine pointer → 1080.
+ * Landscape desktop with a fine pointer → 4K (local faststart, else Blob),
+ * then 1080, then 720 on miss.
  */
 function pickFilmVariant(): FilmPick {
   if (cachedPick) return cachedPick;
@@ -65,7 +82,7 @@ function pickFilmVariant(): FilmPick {
 
   cachedPick =
     desktopScreen && !isTabletClass()
-      ? { src: FILM.scrubDesktop, poster: FILM.firstDesktop }
+      ? desktopFilm()
       : { src: FILM.scrub, poster: FILM.first };
   return cachedPick;
 }
@@ -126,6 +143,8 @@ export function VideoScrubber({
   const pick = pickFilmVariant();
   const [override, setOverride] = useState<FilmPick | null>(null);
   const [frameUp, setFrameUp] = useState(false);
+  const triedRemote = useRef(false);
+  const tried1080 = useRef(false);
   const tried720 = useRef(false);
   const painted = useRef(false);
   const appleTouch = useRef(isAppleTouch());
@@ -159,7 +178,21 @@ export function VideoScrubber({
   };
 
   const stepDown = () => {
-    if (active.src !== FILM.scrub && !tried720.current) {
+    if (active.src === FILM.scrubDesktop && !triedRemote.current) {
+      triedRemote.current = true;
+      painted.current = false;
+      setFrameUp(false);
+      setOverride({ src: FILM.scrubDesktopRemote, poster: FILM.firstDesktop });
+      return;
+    }
+    if (isDesktopFourK(active.src) && !tried1080.current) {
+      tried1080.current = true;
+      painted.current = false;
+      setFrameUp(false);
+      setOverride({ src: FILM.scrub1080, poster: FILM.first1080 });
+      return;
+    }
+    if ((isDesktopFourK(active.src) || active.src === FILM.scrub1080) && !tried720.current) {
       tried720.current = true;
       painted.current = false;
       setFrameUp(false);

@@ -28,6 +28,9 @@
 > GSAP `pin: true` writes `transform: matrix(1,0,0,1,0,0)` onto the video's ancestor.
 > Film is a **fixed layer** + empty runway. Do not restore `pin` on the film. Pickup:
 > `docs/NEXT_SESSION.md`.
+> ⚠️ **UPDATE 2026-09-09 — v3.1.3.** Desktop playhead is 4K again (local faststart on
+> localhost; Vercel Blob on preview/production). Phone stays 720. 1080 is the 4K miss
+> fallback. Interior I-frames can hitch; that is accepted. Do not hand 4K to a phone.
 
 ---
 
@@ -121,12 +124,13 @@ scroll-reveals everywhere. **Scroll damping is mandatory — see `docs/SCROLL_ME
 The experience is now **two phases**, not one long multi-beat film:
 
 1. **Pinned hero scrub (vertical, ~0–85% of the runway)** — the hero is
-   the signed **25.33s full-film trim**, served as the faststart pair in `FILM`
-   (`-v2-grade-faststart.mp4` on phone, `-upres-1080-grade-crf21-faststart.mp4`
-   on desktop): foam → rinse → in through the near door → interior → back out
-   and the door closes flush. `PIN_RUNWAY_VH = 13`. Clip 1, clip 2 and both
-   remainder takes stay on disk and are no longer served. Wax is not in the film.
-   4K is loupe stills only — never the playhead.
+   the signed **25.33s full-film trim**, served as the pair in `FILM`
+   (`-v2-grade-faststart.mp4` on phone, 4K on landscape desktop — local
+   faststart / Blob remote, 1080 only if 4K misses): foam → rinse → in
+   through the near door → interior → back out and the door closes flush.
+   `PIN_RUNWAY_VH = 13`. Clip 1, clip 2 and both remainder takes stay on
+   disk and are no longer served. Wax is not in the film. 4K JPGs remain
+   the comparison loupe.
 2. **Normal scroll flow (released, ~85–100%)** — Trust panel ("THE STANDARD ON YOUR STREET." — placeholder copy) →
    Before/After comparison → **Request a time** (the booking composer, `docs/BOOKING_COMPOSER.md`).
    These are ordinary stacked sections, not pinned. The composer replaces the old dead `#book`
@@ -143,9 +147,12 @@ rather than becoming a new page section.
 ```
 public/video/lambo-wash-full-scrub-take1-trim-v2-grade-faststart.mp4
   SERVED on phone / portrait / tablet — 720p all-intra, grade baked, moov at start
+public/video/lambo-wash-full-scrub-take1-trim-upres-4k-grade-crf21-faststart.mp4
+  SERVED on localhost landscape desktop — 4K all-intra, grade baked, moov at start (gitignored)
+FILM.scrubDesktopRemote  (Vercel Blob, same 4K encode)
+  SERVED on preview/production landscape desktop — Range-verified; moov at end
 public/video/lambo-wash-full-scrub-take1-trim-upres-1080-grade-crf21-faststart.mp4
-  SERVED on landscape desktop — 1080 all-intra, grade baked, moov at start
-  (4K all-intra melts the decoder on the interior beat; 4K is loupe stills only)
+  FALLBACK on desktop when 4K misses — 1080 all-intra, grade baked, moov at start
 public/video/lambo-wash-full-scrub-take1-trim.mp4  25.33s all-intra trim (608 frames) — archive, do not serve
 public/images/lambo-wash-full-start.jpg            poster + ARRIVAL comparison still
 public/images/lambo-wash-full-trim-last.jpg        frame 607 — wet gloss black, near door flush (comparison)

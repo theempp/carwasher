@@ -3,19 +3,21 @@
 Phone on production still looked dead after faststart shipped. The 720 file was
 the right one; GSAP `pin: true` was writing `transform: matrix(1,0,0,1,0,0)` onto
 the `<section>` that owned the `<video>`, and iOS Safari paints that surface black.
-Desktop interior hitch was already fixed (1080, not 4K). **No Higgsfield spend.**
-Do not fire 1080 / 2K / 4K again. 4K stays on disk for the comparison loupe only.
+Desktop playhead is 4K again (v3.1.3). **No Higgsfield spend.**
+Do not fire 1080 / 2K / 4K again. Interior I-frames can hitch; that is accepted.
 
 ## Read in this order
-1. `CLAUDE.md` — v3.1.2 banner, §2 (no pin on the film), §5–7, §10 (rules 11–15), §11.
+1. `CLAUDE.md` — v3.1.3 banner, §2 (no pin on the film), §5–7, §10 (rules 11–15), §11.
 2. `docs/QUALITY_AND_PERF.md` — pixels-per-byte and the P1–P8 list (those are done).
 3. `docs/BOOKING_COMPOSER.md` — page ending.
 4. This file.
 
 ## The decisions already made — do not re-litigate
 - **Mobile stays 720p, always.** Never hand an upres to a phone.
-- **Desktop film is 1080, not 4K.** Highest quality that still scrubs. 4K I-frames melted
-  the decoder on the interior (~15–23s / stations 0.59–0.91). 4K JPGs remain the loupe source.
+- **Desktop film is 4K.** Localhost serves the gitignored faststart file; preview /
+  production serve `FILM.scrubDesktopRemote` (Vercel Blob). 1080 is the miss fallback.
+  Interior I-frames (~15–23s) can hitch — accepted 2026-09-09. 4K JPGs remain the loupe.
+  Never hand 4K to a phone.
 - **Booking composer only.** The process ledger is cut. The page ends there.
 - **Do not restore `ScrollTrigger` `pin` / `anticipatePin` on the film.** Progress comes
   from an empty runway (`start: "top top"`, `end: "bottom bottom"`). The film is
@@ -28,14 +30,19 @@ phone / portrait / small / tablet
   public/video/lambo-wash-full-scrub-take1-trim-v2-grade-faststart.mp4
   608f, 24fps, 1280×720, all-intra, grade baked, moov at START (~25 MB)
 
-landscape desktop
+landscape desktop (localhost)
+  public/video/lambo-wash-full-scrub-take1-trim-upres-4k-grade-crf21-faststart.mp4
+  608f, 24fps, 3840×2160, all-intra, grade baked, CRF 21, moov at START (~143 MB, gitignored)
+
+landscape desktop (preview / production)
+  FILM.scrubDesktopRemote — same 4K encode on Vercel Blob, moov at END
+  Range re-verified 2026-09-09: `bytes=0-1023` → `0-1023/149832707`
+
+1080 fallback
   public/video/lambo-wash-full-scrub-take1-trim-upres-1080-grade-crf21-faststart.mp4
-  608f, 24fps, 1920×1080, all-intra, grade baked, CRF 21, moov at START (~46 MB)
 ```
 
-Do **not** point `FILM.scrubDesktop` at the 4K file or the Vercel Blob URL. Blob Range
-for that 143 MB object is broken (`bytes=0-1023` → `0-1023/1024`). Local 4K faststart
-exists but is gitignored (GitHub 100 MB limit) and is not a scrub source.
+Do not re-upload 4K to Blob unless Range breaks again. Do not hand 4K to a phone.
 
 Variant pick is once at mount inside `VideoScrubber` (`ssr: false`). Tablets excluded
 via `(pointer: coarse)` or iPadOS-as-MacIntel. CSS filter is gone. P2 and P8 are done.
@@ -72,11 +79,11 @@ public/video/lambo-wash-full-scrub-take1-trim-v2-grade.mp4     pre-faststart 720
 public/video/lambo-wash-full-scrub-take1-trim-v2-grade-faststart.mp4  SERVED phone
 public/video/lambo-wash-full-take1-trim-upres-1080.mp4         signed ByteDance 1080 raw (3 kf)
 public/video/lambo-wash-full-scrub-take1-trim-upres-1080-grade-crf21.mp4  pre-faststart 1080 — disk archive, gitignored
-public/video/lambo-wash-full-scrub-take1-trim-upres-1080-grade-crf21-faststart.mp4  SERVED desktop
+public/video/lambo-wash-full-scrub-take1-trim-upres-1080-grade-crf21-faststart.mp4  1080 fallback
 public/video/lambo-wash-full-take1-trim-upres-4k.mp4           signed ByteDance 4K pro raw — local, not in git
-public/video/lambo-wash-full-scrub-take1-trim-upres-4k-grade-crf21-faststart.mp4  4K archive — gitignored, NOT film
+public/video/lambo-wash-full-scrub-take1-trim-upres-4k-grade-crf21-faststart.mp4  SERVED localhost desktop
 public/images/lambo-wash-full-start.jpg                       720 poster
-public/images/lambo-wash-full-start-upres-1080.jpg            1080 poster (desktop film)
+public/images/lambo-wash-full-start-upres-1080.jpg            1080 poster (fallback)
 public/images/lambo-wash-full-start-upres-4k.jpg              4K loupe only
 public/images/lambo-wash-full-trim-last.jpg                   comparison still (frame 607)
 public/images/lambo-wash-full-trim-last-upres-4k.jpg          4K loupe last
@@ -100,7 +107,7 @@ v3.1.2 fixed film layer (no GSAP pin on `<video>`).
    phone after promote. Git push deploys a preview; promote that. Do not
    `vercel --prod` from this tree (`public/video` is huge; gitignored 4K is 143 MB).
 2. C2 (gate scroll until buffered) and C3 (drop extra ScrollTrigger.update) stay gated.
-3. Blob 4K Range is still broken — do not re-point desktop at it.
+3. Eyeball the 4K interior hitch on a real desktop; drop back to 1080 only if asked.
 4. Eyeball SEEK_EPSILON 0.02 on a real desktop; if the playhead feels quantized, it
    can go toward 0.01 — do not go back to 0.003.
 
