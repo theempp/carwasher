@@ -15,10 +15,11 @@ export const FILM = {
    */
   scrub: "/video/lambo-wash-full-scrub-take1-trim-v2-grade.mp4",
   /**
-   * 1080p all-intra of the signed upres, grade baked. Landscape desktop only.
-   * Never hand this to a phone — 1280 already exceeds what it can resolve.
+   * 1080p all-intra of the signed upres, grade baked, CRF 21. Landscape
+   * desktop only. Never hand this to a phone — 1280 already exceeds what
+   * it can resolve.
    */
-  scrubDesktop: "/video/lambo-wash-full-scrub-take1-trim-upres-1080-grade.mp4",
+  scrubDesktop: "/video/lambo-wash-full-scrub-take1-trim-upres-1080-grade-crf21.mp4",
   /** Poster + arrival still: the frame the film opens on. */
   first: "/images/lambo-wash-full-start.jpg",
   /** Matching 1080 arrival still for the desktop poster. */

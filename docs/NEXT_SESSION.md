@@ -1,8 +1,8 @@
 # Next Session — pick up here (written 2026-09-08, after the 1080 path shipped)
 
 Steps 1–5 of v3.1 are done and wired. The site serves a grade-baked 720p re-cut to phones
-and the signed grade-baked 1080 upres to landscape desktop. Grain is a static 2.5% tile.
-**Nothing Higgsfield has been spent since the signed 1080 job (0.51 cr).**
+and the signed grade-baked 1080 upres (CRF 21, 45.9 MB) to landscape desktop. Grain is a
+static 2.5% tile. **Nothing Higgsfield has been spent since the signed 1080 job (0.51 cr).**
 
 ## Read in this order
 1. `claude.md` — the v3.1 banner at the top, then §5, §6, §7, §10 (rules 11–14) and §11.
@@ -20,11 +20,12 @@ and the signed grade-baked 1080 upres to landscape desktop. Grain is a static 2.
 public/video/lambo-wash-full-take1.mp4                         30s master — never serve
 public/video/lambo-wash-full-take1-trim.mp4                    signed 25.33s 720p trim — never serve
 public/video/lambo-wash-full-scrub-take1-trim.mp4              old third-gen 720 scrub — not served
-public/video/lambo-wash-full-scrub-take1-trim-v2.mp4           720 all-intra from master, no grade
+public/video/lambo-wash-full-scrub-take1-trim-v2.mp4           720 all-intra, no grade — local archive, not in git
 public/video/lambo-wash-full-scrub-take1-trim-v2-grade.mp4     SERVED on phone / portrait / small
 public/video/lambo-wash-full-take1-trim-upres-1080.mp4         signed ByteDance 1080 raw (3 kf)
-public/video/lambo-wash-full-scrub-take1-trim-upres-1080.mp4   1080 all-intra, no grade
-public/video/lambo-wash-full-scrub-take1-trim-upres-1080-grade.mp4  SERVED on landscape desktop
+public/video/lambo-wash-full-scrub-take1-trim-upres-1080.mp4   1080 all-intra, no grade — local archive, not in git
+public/video/lambo-wash-full-scrub-take1-trim-upres-1080-grade.mp4  CRF 20 archive — local, not in git
+public/video/lambo-wash-full-scrub-take1-trim-upres-1080-grade-crf21.mp4  SERVED on landscape desktop
 public/images/lambo-wash-full-start.jpg                       720 poster
 public/images/lambo-wash-full-start-upres-1080.jpg            1080 poster
 public/images/lambo-wash-full-trim-last.jpg                   comparison still (frame 607)

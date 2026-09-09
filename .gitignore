@@ -33,3 +33,8 @@ next-env.d.ts
 
 # Review-only reels (not served, not wired)
 .tmp-review/
+
+# Archive encodes kept on disk, not served (CRF 20 1080, unbaked scrubs)
+public/video/lambo-wash-full-scrub-take1-trim-upres-1080.mp4
+public/video/lambo-wash-full-scrub-take1-trim-upres-1080-grade.mp4
+public/video/lambo-wash-full-scrub-take1-trim-v2.mp4
