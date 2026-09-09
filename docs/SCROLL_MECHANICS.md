@@ -117,6 +117,38 @@ Copy is a working draft — the owner has not signed off on final words. Keep st
 on load (Trap 2, §3) and let the last station's label persist through release rather than fading out
 right before the pin ends.
 
+## 6b. Runtime cost — the traps that only show up on a phone (v3.1)
+
+> Added 2026-09-08 (night). `docs/QUALITY_AND_PERF.md` §5 is the full list with file/line detail;
+> these are the ones that are *motion* bugs rather than media bugs, so they are recorded here too.
+
+**Trap 3 — a seek queue is not a playhead.** `seekVideo` currently assigns `video.currentTime` on
+every rAF where the delta exceeds 0.003. Desktop absorbs it; iOS backs the seek queue up until the
+film stutters or stalls mid-scroll. **Keep at most one seek in flight:** skip while `video.seeking`
+is true, hold the pending target, apply it on `seeked`. Damping (§2.4) decides *what* the playhead
+should be; this decides *how often we are allowed to ask for it*. The two are separate and both are
+required.
+
+**Trap 4 — `dvh` moves while you scroll.** The stage is `h-dvh`, and on iOS Safari and Chrome Android
+the URL bar showing/hiding changes `dvh` mid-gesture. With `invalidateOnRefresh: true` the pin then
+recalculates under the user's thumb — the classic pin jump. Fix with
+`ScrollTrigger.config({ ignoreMobileResize: true })`.
+
+**Trap 5 — two owners for one lenis, and a proxy nobody reads.** `SmoothScroll` (in `layout.tsx`) and
+`useScrollProgress` both call `ensureSmoothScroll()`, and only the former calls
+`releaseSmoothScroll()` on cleanup — under StrictMode's dev double-invoke that can destroy lenis
+while the hook still depends on it. Separately, `lenis.ts` registers a `scrollerProxy` on
+`document.documentElement` while the `ScrollTrigger.create` in `useScrollProgress` sets no `scroller`
+and so uses the default (window) and never consults it — meanwhile `lenis.on("scroll", …)` calls
+`ScrollTrigger.update()` on top of ScrollTrigger's own listener. Verify, then own the lifecycle in
+one place and remove the dead path so update runs once per frame.
+
+**Trap 6 — never swap `src` mid-session.** v3.1 serves a 720p file to portrait/mobile and a 1080p
+upres to desktop landscape. Choose **once, at mount**. Changing `src` later resets `currentTime` and
+drops the playhead on the floor.
+
+---
+
 ## 7. Reference implementation
 
 `public/direction-lab.html` still exists from v2 and demonstrates the damping/pacing mechanics

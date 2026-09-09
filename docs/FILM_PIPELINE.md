@@ -21,6 +21,22 @@
 > flush). Sentences below that say "serve clip 1 only" or "do not wire anything past clip 1"
 > describe the state before that trim was signed.
 
+> ⚠️ **UPDATE 2026-09-08 (night) — v3.1: the softness is resolution, and the upres is GO to price.**
+> Measured, not guessed: the all-intra step is near-transparent to its source (PSNR 43.08 dB, SSIM
+> 0.9937, 608/608 keyframes) and the trim step costs about the same again (43.65 dB). **The master is
+> 1280×720 and desktop upscales it 2.5×.** So §3's encode is not at fault and must not be "optimized."
+> Two things follow, both specified in **`docs/QUALITY_AND_PERF.md`** — read it before touching media:
+> 1. **Re-cut the all-intra scrub straight from the 30s master** (`-t 25.333333 -g 1`), skipping the
+>    lossy intermediate trim, so the served file stops being a third-generation encode. New filename
+>    (`-v2.mp4`), never overwrite, and verify 608 frames / 608 keyframes / 25.333s before wiring.
+> 2. **Upres the signed trim via Higgsfield `upscale_video`** — this is the §4 clause "1080p only if a
+>    take is signed and we upres," and the take is signed. Preflight with `get_cost: true`, show the
+>    owner, wait for a typed **GO**. Uploading sends the footage to Higgsfield: say so before doing it.
+>    The owner then signs the result frame-by-frame — upscalers rewrite foam edges and lens flare, and
+>    if the look changed, we bin it and keep 720p.
+> **Desktop only.** A phone letterboxes the film and is width-constrained, so 1280px already exceeds
+> what it can resolve; the upres never goes to mobile.
+
 ---
 
 ## 1. LOCKED DIRECTION (v3 — supersedes the old wash-bay continuous-take plan)

@@ -18,6 +18,18 @@
 
 ---
 
+> ⚠️ **UPDATE 2026-09-08 (night) — v3.1. Direction unchanged; quality, performance and the ending are.**
+> The film's softness was measured, not guessed: the all-intra encode is near-transparent to its
+> source (SSIM 0.9937) — **the master is 1280×720 and we upscale it 2.5× on a retina desktop.**
+> Owner decisions this session: (a) **go straight to the Higgsfield upres** for the desktop path,
+> (b) **booking composer only** as new page content — the process ledger is cut, and (c) **mobile and
+> desktop both smooth and fast, no glitches, is a shipping gate.** New authoritative docs:
+> - `docs/QUALITY_AND_PERF.md` — **owns image quality, the variant split, and the performance budget**
+> - `docs/BOOKING_COMPOSER.md` — owns the page's ending and the v3.1 component upgrades
+> Nothing in either has been executed yet. Sections 5–7 and 10 below are amended to match.
+
+---
+
 ## 1. Concept (one line)
 
 A scroll-controlled cinematic clip of one car being washed on a private estate driveway — **static
@@ -111,7 +123,9 @@ The experience is now **two phases**, not one long multi-beat film:
    `PIN_RUNWAY_VH = 13`. Clip 1, clip 2 and both remainder takes stay on disk and are no longer
    served. Wax is not in the film.
 2. **Normal scroll flow (released, ~85–100%)** — Trust panel ("THE STANDARD ON YOUR STREET." — placeholder copy) →
-   Before/After comparison → BOOK CTA. These are ordinary stacked sections, not pinned.
+   Before/After comparison → **Request a time** (the booking composer, `docs/BOOKING_COMPOSER.md`).
+   These are ordinary stacked sections, not pinned. The composer replaces the old dead `#book`
+   anchor; it is the only section added in v3.1 and the page ends there.
 
 This is a deliberate simplification from v2's eight-beat wash-bay-to-departure narrative: one
 continuous drone take carries the whole wash, and anything added later chains onto the same pin
@@ -122,7 +136,10 @@ rather than becoming a new page section.
 ## 6. Media Assets
 
 ```
-public/video/lambo-wash-full-scrub-take1-trim.mp4  25.33s all-intra trim (608 frames) — SERVE THIS to <video>
+public/video/lambo-wash-full-scrub-take1-trim.mp4  25.33s all-intra trim (608 frames) — SERVED TODAY
+  ^ v3.1 will re-cut this from the 30s master (drops a lossy generation) as -v2.mp4, and may
+    add a 1080p upres variant for desktop only. New filenames, never overwrite. Mobile stays
+    720p — a phone cannot resolve more. See docs/QUALITY_AND_PERF.md §1, §3.
 public/images/lambo-wash-full-start.jpg            poster + ARRIVAL comparison still
 public/images/lambo-wash-full-trim-last.jpg        frame 607 — wet gloss black, near door flush (comparison)
 public/video/lambo-wash-full-take1-trim.mp4        raw trim — DO NOT serve
@@ -163,6 +180,9 @@ public/images/lambo-wash-03-last-take2.jpg      take 2 last frame — overhead, 
 - **Next.js (App Router) + TypeScript + Tailwind** — app + layout + type.
 - **GSAP + ScrollTrigger** — pin the stage, map scroll → damped progress (0..1).
 - **`<video>` scrub (primary)** — all-intra MP4, `video.currentTime = progress * duration`.
+  v3.1: at most one seek in flight (see `docs/QUALITY_AND_PERF.md` §5 P1), and the resolution
+  variant is chosen once at mount inside `VideoScrubber` — never swapped mid-session, because
+  changing `src` resets `currentTime` and drops the playhead.
 - **Canvas 2D frame-sequence (fallback only)** — kept as a documented escape hatch, not the default.
 - Overlay layer — one section label + the trust-panel headline, driven by the same progress value.
 - **No backend.** CTA links out (phone / Instagram DM / Calendly / Square — owner's existing
@@ -213,11 +233,26 @@ See `SETUP.md` for environment status (already verified, nothing to redo).
     and also frozen. The remainder is a **drone path** (`docs/REMAINDER_BRIEF.md`) — no fur
     interior, no rear-jerk, no parked freeze, no empty coverage.
 
+**Added in v3.1 (2026-09-08 night):**
+
+11. **Performance is a shipping gate, not polish.** The budget in `docs/QUALITY_AND_PERF.md` §4 is
+    binding on mobile and desktop alike, and the known glitch risks in §5 are located defects to
+    fix — not speculative cleanups.
+12. **Never overwrite a media file.** Every re-encode or upres lands on a new filename, and the old
+    file stays on disk until the replacement is verified and signed.
+13. **Never hand the upres to mobile.** A phone letterboxes the 16:9 film and is width-constrained,
+    so 1280px already exceeds what it can resolve (`docs/QUALITY_AND_PERF.md` §1). More bytes there
+    buy zero pixels and risk the tab being reaped.
+14. **Preflight every paid generation.** `get_cost: true`, show the owner the number, wait for a
+    typed **GO**. Say so *before* uploading footage to an external service, not after.
+
 ---
 
 ## 11. Definition of Done — Rough Draft
 
-1. `npm run dev` runs clean. 2. Page pins and vertically scroll-scrubs `lambo-wash-01-scrub.mp4` smoothly, forward and backward, with no stutter. 3. Placeholder renders correctly with zero media present. 4. Dropping a real second clip upgrades the experience with no code change beyond the timeline config. 5. Trust panel and before/after sections render below the released scroll. 6. Hero matches the reference clip framing (static, side profile, driveway). 7. Ends in a premium BOOK CTA that links out. 8. Mobile scrolls and scrubs. 9. No SaaS look, no invented assets, no claim the car is "clean" when the only footage shown is dirty→foamed.
+1. `npm run dev` runs clean. 2. Page pins and vertically scroll-scrubs the served all-intra trim (`lambo-wash-full-scrub-take1-trim.mp4`, or its verified v3.1 re-cut) smoothly, forward and backward, with no stutter. 3. Placeholder renders correctly with zero media present. 4. Dropping a real second clip upgrades the experience with no code change beyond the timeline config. 5. Trust panel and before/after sections render below the released scroll. 6. Hero matches the reference clip framing (static, side profile, driveway). 7. Ends in a premium BOOK CTA that links out. 8. Mobile scrolls and scrubs. 9. No SaaS look, no invented assets, no claim the car is "clean" when the only footage shown is dirty→foamed.
+
+**Added in v3.1:** 10. Desktop gets the upres variant and mobile gets 720p — verified by watching which file is actually requested under iPhone-class emulation. 11. No frame over 16.7 ms sustained while scrubbing on either path, with the CPU throttled 4×. 12. At most one video seek in flight at any moment. 13. The booking composer composes a visible message and hands off to a single placeholder link constant. 14. `prefers-reduced-motion` is honored by every section, not just the scroll hook.
 
 <!-- BEGIN:nextjs-agent-rules -->
 

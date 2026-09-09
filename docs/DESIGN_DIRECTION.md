@@ -54,6 +54,16 @@ that made the reference (and the owner's own clip) worth building around.
 `contrast(1.04) saturate(1.05)` at most — this is a taste call at build time, not a mandate. **Do
 not desaturate.**
 
+> **v3.1 (2026-09-08 night):** that grade currently ships as a CSS `filter` on `.film-scrub`, which
+> is a per-frame GPU pass over a fullscreen video. **Bake it into the encode and delete the CSS
+> filter** — identical result, zero runtime cost. "A taste call at build time" is exactly what this
+> is. See `docs/QUALITY_AND_PERF.md` §3 step 5.
+
+**Grain (new in v3.1):** ~2.5% opacity over the film, to mask the upscale softness and h264 banding
+in the flat sky and the white villa. It must be a **static tiled texture composited once** — never
+animated, never a canvas loop. Film grain is ESTATE; animated noise is decorative motion with no
+purpose, which is forbidden below.
+
 **Scrim (over the film, for the wordmark/nav only):** `linear-gradient(180deg, rgba(0,0,0,.35) 0%,
 rgba(0,0,0,0) 22%, rgba(0,0,0,0) 78%, rgba(0,0,0,.4) 100%)` — top and bottom only, so the chrome is
 legible without veiling the car, which sits in the clear middle band.
@@ -108,6 +118,19 @@ structure:
   not `lambo-wash-03-last.jpg`) and the labels only then; don't fake the copy in the meantime.
 
 Both sections use the same achromatic UI tokens as the chrome; only the film itself carries colour.
+
+3. **Request a time — the booking composer (added v3.1, 2026-09-08 night).** The page's ending, and
+   the only section added since. It replaces the dead `#book` anchor with three choices that compose
+   a visible prefilled message and hand off to the owner's real channel — still no backend, still
+   just a link out. A process-ledger section was considered and **cut** to keep the page short and
+   mobile cheap. Full spec, including the "not a card grid, not a pricing table" form and the
+   no-prices-until-signed honesty rule: **`docs/BOOKING_COMPOSER.md`**. No new routes — one
+   uninterrupted scroll is the point.
+
+Note the labels in §5.2 above are superseded: the comparison now uses the full-film trim's own first
+and last frames, labelled **ARRIVAL** / **RINSED, DOOR CLOSED**, and it is a **two-up, not a wipe**
+(the frames are shot from different distances, so a slider would imply one locked camera). Never
+"after", "spotless", "finished" or "clean reveal" — the last frame is a wet car.
 
 ---
 
