@@ -5,7 +5,7 @@ import { useCallback, useRef, useState } from "react";
 import { FrameScrubber } from "@/app/components/experience/FrameScrubber";
 import { LoadingScreen } from "@/app/components/experience/LoadingScreen";
 import { SceneOverlay } from "@/app/components/experience/SceneOverlay";
-import { FILM } from "@/lib/scene/sceneTimeline";
+import { FILM, PIN_RUNWAY_VH } from "@/lib/scene/sceneTimeline";
 import { useScrollProgress } from "@/lib/utils/useScrollProgress";
 
 const VideoScrubber = dynamic(
@@ -19,9 +19,9 @@ const VideoScrubber = dynamic(
 type MediaMode = "video" | "stills" | "placeholder";
 
 export function CinematicStage() {
-  const stageRef = useRef<HTMLElement>(null);
+  const runwayRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const progress = useScrollProgress(stageRef, { videoRef });
+  const progress = useScrollProgress(runwayRef, { videoRef });
   const [mode, setMode] = useState<MediaMode>("video");
   const [firstFrame, setFirstFrame] = useState(false);
   const [settled, setSettled] = useState(false);
@@ -57,46 +57,54 @@ export function CinematicStage() {
     mode !== "placeholder" && (!firstFrame || waiting || !settled);
 
   return (
-    <section
-      ref={stageRef}
-      data-tone="dark"
-      className="relative h-dvh w-full overflow-hidden bg-ink"
-    >
-      {mode === "video" ? (
-        <VideoScrubber
-          videoRef={videoRef}
-          onFirstFrame={handleFirstFrame}
-          onBufferProgress={handleBufferProgress}
-          onSettled={handleSettled}
-          onWaiting={handleWaiting}
-          onFail={handleVideoFail}
+    <>
+      {/*
+        Film is its own fixed layer — not a GSAP pin target. Pinning writes a
+        transform onto the ancestor, and iOS Safari then composites <video> as
+        black. Touches pass through so the document still scrolls.
+      */}
+      <div className="film-stage pointer-events-none fixed inset-0 z-0 h-dvh w-full bg-ink">
+        {mode === "video" ? (
+          <VideoScrubber
+            videoRef={videoRef}
+            onFirstFrame={handleFirstFrame}
+            onBufferProgress={handleBufferProgress}
+            onSettled={handleSettled}
+            onWaiting={handleWaiting}
+            onFail={handleVideoFail}
+          />
+        ) : null}
+
+        {mode === "stills" ? (
+          <FrameScrubber
+            progress={progress}
+            onReady={handleStillsReady}
+            onFail={handleStillsFail}
+          />
+        ) : null}
+
+        {mode === "placeholder" ? <FilmPlaceholder /> : null}
+
+        {mode === "placeholder" ? null : (
+          <>
+            <div className="film-grain pointer-events-none absolute inset-0 z-[5]" />
+            <div className="film-scrim pointer-events-none absolute inset-0 z-10" />
+            <SceneOverlay progress={progress} />
+          </>
+        )}
+        <LoadingScreen
+          visible={showLoading}
+          progress={waiting && loadProgress == null ? null : loadProgress}
         />
-      ) : null}
-
-      {mode === "stills" ? (
-        <FrameScrubber
-          progress={progress}
-          onReady={handleStillsReady}
-          onFail={handleStillsFail}
-        />
-      ) : null}
-
-      {mode === "placeholder" ? <FilmPlaceholder /> : null}
-
-      {/* Station copy is composed into the shot — with no shot, only the
-          placeholder speaks. Grain sits above the film, under the scrim. */}
-      {mode === "placeholder" ? null : (
-        <>
-          <div className="film-grain pointer-events-none absolute inset-0 z-[5]" />
-          <div className="film-scrim pointer-events-none absolute inset-0 z-10" />
-          <SceneOverlay progress={progress} />
-        </>
-      )}
-      <LoadingScreen
-        visible={showLoading}
-        progress={waiting && loadProgress == null ? null : loadProgress}
+      </div>
+      <section
+        ref={runwayRef}
+        data-tone="dark"
+        aria-hidden
+        className="w-full"
+        style={{ height: `calc(${PIN_RUNWAY_VH + 1} * 100dvh)` }}
       />
-    </section>
+    </>
   );
 }
 

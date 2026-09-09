@@ -96,13 +96,22 @@ function requestPaint(
   video: HTMLVideoElement,
   onPaint: () => void,
 ) {
+  let done = false;
+  const once = () => {
+    if (done) return;
+    done = true;
+    onPaint();
+  };
   const rvfc = (
     video as HTMLVideoElement & {
       requestVideoFrameCallback?: (cb: () => void) => number;
     }
   ).requestVideoFrameCallback;
   if (typeof rvfc === "function") {
-    rvfc.call(video, () => onPaint());
+    rvfc.call(video, () => once());
+  } else {
+    video.addEventListener("seeked", once, { once: true });
+    video.addEventListener("loadeddata", once, { once: true });
   }
 }
 
@@ -135,14 +144,18 @@ export function VideoScrubber({
 
   const tryPaint = (video: HTMLVideoElement) => {
     onFirstFrameRef.current?.();
-    requestPaint(video, markPainted);
-    video.addEventListener("playing", markPainted, { once: true });
-    void video
-      .play()
-      .then(() => video.pause())
-      .catch(() => {
-        // iOS often rejects play() until a gesture. The poster image stays up.
-      });
+    // Do not treat `playing` as a painted frame — iOS Safari can fire it and
+    // still composite a black surface. Hide the still only after a real frame.
+    const afterFrame = () => {
+      if (!video.paused) video.pause();
+      markPainted();
+    };
+    requestPaint(video, afterFrame);
+    void video.play().then(() => {
+      requestPaint(video, afterFrame);
+    }).catch(() => {
+      // iOS often rejects play() until a gesture. The poster image stays up.
+    });
   };
 
   const stepDown = () => {
@@ -232,24 +245,29 @@ export function VideoScrubber({
   }, [videoRef, active.src, onBufferProgress, onSettled, onWaiting]);
 
   // iOS will not paint a frame (and may reject seeks) until play() runs
-  // inside a user gesture. One pointerdown unlocks the rest of the session.
+  // inside a user gesture. First touch unlocks the rest of the session.
   useEffect(() => {
     if (!appleTouch.current) return;
     const video = videoRef.current;
     if (!video) return;
 
     const unlock = () => {
-      requestPaint(video, markPainted);
       void video
         .play()
         .then(() => {
-          video.pause();
-          markPainted();
+          requestPaint(video, () => {
+            video.pause();
+            markPainted();
+          });
         })
         .catch(() => {});
     };
     window.addEventListener("pointerdown", unlock, { once: true, passive: true });
-    return () => window.removeEventListener("pointerdown", unlock);
+    window.addEventListener("touchstart", unlock, { once: true, passive: true });
+    return () => {
+      window.removeEventListener("pointerdown", unlock);
+      window.removeEventListener("touchstart", unlock);
+    };
   }, [videoRef, active.src]);
 
   return (

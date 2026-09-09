@@ -83,6 +83,14 @@ body {
   text-transform: uppercase;
 }
 
+.film-stage {
+  /* Isolate the decode surface from GSAP pin transforms. Any transform,
+     filter, or overflow on an ancestor is enough for iOS Safari to paint
+     <video> black. */
+  transform: none;
+  filter: none;
+}
+
 .film-scrub {
   /* Own layer so the grain/scrim composite above it without repainting the
      decode surface. Grade is baked into the encode — do not restore a filter.

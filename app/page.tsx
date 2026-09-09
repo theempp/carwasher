@@ -11,9 +11,11 @@ export default function Home() {
       <Navigation />
       <main id="top">
         <CinematicStage />
-        <TrustPanel />
-        <BeforeAfter />
-        <BookingComposer />
+        <div className="relative z-10">
+          <TrustPanel />
+          <BeforeAfter />
+          <BookingComposer />
+        </div>
       </main>
       <ScrollProgress />
     </>

@@ -30,11 +30,10 @@ export function SceneOverlay({ progress }: SceneOverlayProps) {
             className="absolute top-[38%] left-0 w-full max-w-[min(42rem,92vw)] -translate-y-1/2 px-[6vw] md:top-[40%] [@media(max-aspect-ratio:1/1)]:top-auto [@media(max-aspect-ratio:1/1)]:bottom-[17vh] [@media(max-aspect-ratio:1/1)]:translate-y-0"
             style={{
               opacity,
-              transform: `translate3d(0, ${y}px, 0)`,
+              transform: `translateY(${y}px)`,
               clipPath: station.holdOpen
                 ? undefined
                 : `inset(0 ${((1 - opacity) * 18).toFixed(2)}% 0 0)`,
-              willChange: "transform, opacity",
             }}
             aria-hidden={!visible}
           >

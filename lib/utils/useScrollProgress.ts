@@ -7,7 +7,7 @@ import {
   releaseSmoothScroll,
 } from "@/lib/animation/lenis";
 import { cineEase } from "@/lib/animation/easing";
-import { DAMPING, PIN_RUNWAY_VH } from "@/lib/scene/sceneTimeline";
+import { DAMPING } from "@/lib/scene/sceneTimeline";
 
 type UseScrollProgressOptions = {
   videoRef?: RefObject<HTMLVideoElement | null>;
@@ -203,12 +203,14 @@ export function useScrollProgress(
       };
       mediaQuery.addEventListener("change", onMotionChange);
 
+      // Do not pin the film. GSAP pin writes `transform: matrix(1,0,0,1,0,0)`
+      // onto the trigger, and iOS Safari paints a black <video> inside any
+      // transformed ancestor — even an identity matrix. The stage is a fixed
+      // layer plus an empty runway; this trigger is the runway only.
       ScrollTrigger.create({
         trigger,
         start: "top top",
-        end: () => `+=${window.innerHeight * PIN_RUNWAY_VH}`,
-        pin: true,
-        anticipatePin: 1,
+        end: "bottom bottom",
         invalidateOnRefresh: true,
         onUpdate: (self) => {
           target.value = self.progress;

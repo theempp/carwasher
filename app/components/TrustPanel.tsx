@@ -16,17 +16,22 @@ export function TrustPanel() {
       <div className="mx-auto flex min-h-[85dvh] max-w-[92rem] flex-col justify-center px-[6vw] py-24 md:py-32">
         <h2 className="type-display max-w-[12ch] text-[length:var(--display-size)]">
           {headline.map((line, index) => (
-            <span key={line} className="block overflow-hidden">
+            <motion.span
+              key={line}
+              className="block overflow-hidden"
+              initial="hidden"
+              whileInView="shown"
+              viewport={{ once: true, amount: 0.35 }}
+              variants={{ hidden: {}, shown: {} }}
+              transition={{ duration: 0.9, ease, delay: index * 0.09 }}
+            >
               <motion.span
                 className="block"
-                initial={{ y: "108%" }}
-                whileInView={{ y: "0%" }}
-                viewport={{ once: true, amount: 0.4 }}
-                transition={{ duration: 0.9, ease, delay: index * 0.09 }}
+                variants={{ hidden: { y: "108%" }, shown: { y: "0%" } }}
               >
                 {line}
               </motion.span>
-            </span>
+            </motion.span>
           ))}
         </h2>
 
