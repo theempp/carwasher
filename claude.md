@@ -30,7 +30,9 @@
 > `docs/NEXT_SESSION.md`.
 > ⚠️ **UPDATE 2026-09-09 — v3.1.3.** Desktop playhead is 4K again (local faststart on
 > localhost; Vercel Blob on preview/production). Phone stays 720. 1080 is the 4K miss
-> fallback. Interior I-frames can hitch; that is accepted. Do not hand 4K to a phone.
+> fallback. Designer signed this look 2026-09-09 ("keep this version"). Do not revert
+> to 1080. No `translateZ` on `<video>`. Interior I-frames can hitch. Do not hand 4K
+> to a phone. Pickup: `docs/NEXT_SESSION.md`.
 
 ---
 

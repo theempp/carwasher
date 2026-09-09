@@ -64,21 +64,18 @@ function isDesktopFourK(src: string) {
 
 /**
  * Choose the served file once, on the client, at mount.
- * Portrait / phone / small / tablet / low-DPR → 720p.
+ * Portrait / phone / small / tablet → 720p.
  * Landscape desktop with a fine pointer → 4K (local faststart, else Blob),
- * then 1080, then 720 on miss.
+ * then 1080, then 720 on miss. No DPR / height gate — a windowed 1×
+ * monitor still gets 4K.
  */
 function pickFilmVariant(): FilmPick {
   if (cachedPick) return cachedPick;
 
   const shortSide = Math.min(window.innerWidth, window.innerHeight);
   const portrait = window.matchMedia("(max-aspect-ratio: 1/1)").matches;
-  const dpr = window.devicePixelRatio || 1;
   const desktopScreen =
-    shortSide >= 500 &&
-    !portrait &&
-    window.innerWidth >= 900 &&
-    (dpr >= 1.25 || window.innerHeight > 800);
+    shortSide >= 500 && !portrait && window.innerWidth >= 900;
 
   cachedPick =
     desktopScreen && !isTabletClass()
