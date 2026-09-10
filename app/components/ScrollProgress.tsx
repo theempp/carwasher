@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
  */
 export function ScrollProgress() {
   const [value, setValue] = useState(0);
+  const [onFilm, setOnFilm] = useState(true);
 
   useEffect(() => {
     const read = () => {
@@ -22,6 +23,13 @@ export function ScrollProgress() {
         document.documentElement.scrollHeight - window.innerHeight;
       const next = max > 0 ? window.scrollY / max : 0;
       setValue(Math.min(1, Math.max(0, next)));
+
+      const pin = document.querySelector<HTMLElement>(".after-pin");
+      if (!pin) {
+        setOnFilm(true);
+        return;
+      }
+      setOnFilm(pin.getBoundingClientRect().top > window.innerHeight - 64);
     };
 
     read();
@@ -38,6 +46,7 @@ export function ScrollProgress() {
   return (
     <div
       className="pointer-events-none fixed inset-x-[6vw] bottom-[4.2vh] z-40"
+      style={{ opacity: onFilm ? 1 : 0 }}
       role="progressbar"
       aria-valuenow={percent}
       aria-valuemin={0}

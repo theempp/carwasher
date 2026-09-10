@@ -1,13 +1,19 @@
-# Next Session — pick up here (written 2026-09-09, after designer signed 4K)
+# Next Session — pick up here (written 2026-09-10, HOUSE locked)
 
-The film and the scroll machine are signed. Desktop 4K stays. **No Higgsfield spend.**
+The film and the scroll machine are still signed. Desktop 4K stays. **No Higgsfield spend.**
 Do not fire 1080 / 2K / 4K again. Do not revert desktop to 1080.
 
+**HOUSE below-pin is locked 2026-09-10.** Designer: save here, pick up in a new chat with edits.
+Do not restore leftover Trust → Comparison → Booking. Do not copy the KCS shop (Syne,
+split-field packages). Film overlay stays quiet; below the pin is charcoal / limestone,
+Instrument Serif + Instrument Sans.
+
 ## Read in this order
-1. `CLAUDE.md` — v3.1.3 banner, §2 (no pin on the film), §5–7, §10 (rules 11–15), §11.
-2. `docs/BOOKING_COMPOSER.md` — page ending; blocked on owner words + channel.
-3. `docs/DESIGN_DIRECTION.md` — ESTATE.
-4. This file.
+1. `CLAUDE.md` — v3.1.3 banner, §2 (no pin on the film), §4 HOUSE, §5–7, §10 (rules 11–15).
+2. `docs/DESIGN_DIRECTION.md` — ESTATE film / HOUSE below pin.
+3. `docs/REFERENCE_VAULT.md` — hunt ingested; pick pieces, do not re-open Ingested.
+4. `docs/BOOKING_COMPOSER.md` — composer logic still lives; restyled into the house.
+5. This file.
 
 ## The decisions already made — do not re-litigate
 - **Mobile stays 720p, always.** Never hand an upres to a phone.
@@ -15,7 +21,10 @@ Do not fire 1080 / 2K / 4K again. Do not revert desktop to 1080.
   Localhost serves the gitignored faststart file; production/preview serve
   `FILM.scrubDesktopRemote` (Vercel Blob). 1080 is miss fallback only.
   Interior I-frames (~15–23s) can hitch — accepted. 4K JPGs remain the loupe.
-- **Booking composer only.** The process ledger is cut. The page ends there.
+- **HOUSE below-pin, locked 2026-09-10.** Rail → statement → drive → sequence slabs
+  (signed stations only) → honest frames + loupe → request a time → compass close.
+  Leftover `TrustPanel` / `BeforeAfter` are deleted. Do not bring them back.
+- **Booking composer stays.** SMS / Calendly logic is intact; only the surface changed.
 - **Do not restore `ScrollTrigger` `pin` / `anticipatePin` on the film.** Progress comes
   from an empty runway. Film is `.film-stage` (`position: fixed`, no transform).
 - **No 3D transform on `<video>`.** `translateZ(0)` blacks iOS and can rasterize 4K at
@@ -67,20 +76,20 @@ iOS poster/unlock · video Cache-Control immutable · v3.1.2 fixed film layer (n
 GSAP pin on `<video>`) · v3.1.3 desktop 4K + Blob Range + no `translateZ` on video ·
 custom domain `ctluxurydetails.com` on project `carwasher` (www → apex).
 
-## Next (copy and channel — not more film)
+## Next (edits on the locked HOUSE — not more film)
 The 25.33s trim is the whole hero. Do not generate remainder, rinse, or a new upres
 unless the designer types a standalone `GO` after a quoted cost.
 
-1. **Brand** — replace `[BRAND]` in `Navigation.tsx` and `app/layout.tsx` when the
-   owner supplies the name (and a mark if they have one).
-2. **Booking channel** — `BOOKING_HREF` in `BookingComposer.tsx` is still `#book`.
-   Wire one real outbound (`sms:` / `tel:` / Instagram DM / Calendly / Square)
-   when the owner names the channel and the destination. No backend.
-3. **Signed words** — station copy in `sceneTimeline.ts`, Trust headline
-   ("THE STANDARD ON YOUR STREET."), comparison labels (ARRIVAL / RINSED, DOOR
-   CLOSED), booking tier names. Placeholder until signed. Never invent prices,
-   turnaround, or "spotless / finished / after."
-4. **Real iPhone check** — hard-refresh production after this promote. Confirm
+Designer will bring **edits** in a new chat. Start from this locked look; do not restyle
+the whole house again unless they ask.
+
+1. **Edits they name** — type, colour, section order, buttons, copy. Look docs + vault win.
+2. **Signed words** — station copy in `sceneTimeline.ts`, house headline
+   ("The standard on your street."), frame labels, booking tier names. Placeholder
+   until signed. Never invent prices, turnaround, or "spotless / finished / after."
+3. **Booking channel** — SMS is `+14752898400`. Calendly page is still empty. Wire the
+   calendar when the owner names it. No backend.
+4. **Real iPhone check** — still owed on production after the next promote. Confirm
    the 720 file paints (not black). Desktop 4K is already signed.
 5. C2 (gate scroll until buffered) and C3 (drop extra ScrollTrigger.update) stay
    gated unless the designer asks.
@@ -91,10 +100,11 @@ Vercel project `carwasher`. Public production: https://ctluxurydetails.com
 (www 308s here). Alias still live: https://carwasher.vercel.app.
 Vertical only, damping k=0.09, `cineEase` in `easing.ts` only. Never hard-code scene %
 outside `sceneTimeline.ts`. Media stays behind `<CinematicStage>`. Missing media →
-labeled placeholder, never a fake claim. ESTATE tokens; film in full native colour.
-**No new dependencies.** No Higgsfield unless the latest user message is a standalone
-line `GO`. Never overwrite a media file. Never hand 4K to a phone.
+labeled placeholder, never a fake claim. ESTATE overlay + HOUSE tokens below the pin;
+film in full native colour. **No new dependencies.** No Higgsfield unless the latest
+user message is a standalone line `GO`. Never overwrite a media file. Never hand 4K
+to a phone.
 
 Do not drive the owner's Chrome. Headless on port **9333**, own profile
-`/tmp/chrome-cinematic-9333`, against **`http://localhost:3001`** (not `127.0.0.1`).
-Dev is already on 3001 if 3000 is taken.
+`/tmp/chrome-cinematic-9333`, against **`http://localhost:3000`** (not `127.0.0.1`).
+KCS already holds 3001; EP holds 3002. This job's `dev` is on **3000**.

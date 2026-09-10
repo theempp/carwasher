@@ -43,7 +43,7 @@ export function SceneOverlay({ progress }: SceneOverlayProps) {
               <br />
               {station.headline[1]}
             </h2>
-            <p className="mt-4 max-w-[26rem] text-[0.8rem] leading-relaxed tracking-[0.04em] text-panel-fg/80">
+            <p className="mt-4 max-w-[26rem] text-[0.8rem] leading-relaxed text-panel-fg/80">
               {station.sub}
             </p>
           </div>

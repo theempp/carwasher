@@ -1,43 +1,30 @@
 "use client";
 
 import Image from "next/image";
-import { motion } from "motion/react";
 import { useCallback, useRef, useState } from "react";
 import { FILM } from "@/lib/scene/sceneTimeline";
 
-const ease = [0.22, 1, 0.36, 1] as const;
-
-/** Natural width of the 4K loupe sources. */
 const LOUPE_SOURCE_WIDTH = 3840;
 
-/**
- * Honest pair, not a before/after wipe. The two frames are the film's first
- * and last, shot from different distances — a wipe would imply one locked
- * camera and invite a "finished clean" reading the footage does not support.
- */
 const frames = [
   {
     src: FILM.first,
     loupe: FILM.firstLoupe,
     label: "Arrival",
+    line: "It shows up exactly as it is.",
     alt: "Lamborghini Huracán on the estate driveway on arrival, gloss black",
   },
   {
     src: FILM.last,
     loupe: FILM.lastLoupe,
     label: "Rinsed, door closed",
+    line: "Wet gloss black. The near door flush. Not a dried reveal.",
     alt: "Lamborghini Huracán rinsed to wet gloss black, near door flush",
   },
 ] as const;
 
 type Spot = { x: number; y: number } | null;
 
-/**
- * Press and hold to inspect at 1:1 device pixels. The magnified layer reads the
- * 4K still pulled from the signed archive, not the displayed 720/1024 frame —
- * otherwise the loupe would only magnify the browser's own upscale and imply
- * an inspection it does not deliver.
- */
 function Loupe({
   src,
   active,
@@ -50,7 +37,6 @@ function Loupe({
   if (!active || !spot) return null;
 
   const dpr = typeof window === "undefined" ? 1 : window.devicePixelRatio || 1;
-  // 1 image pixel per device pixel.
   const backgroundWidth = LOUPE_SOURCE_WIDTH / dpr;
 
   return (
@@ -68,29 +54,22 @@ function Loupe({
   );
 }
 
-export function BeforeAfter() {
+export function HouseFrames() {
   return (
-    <section data-tone="dark" className="bg-panel text-panel-fg">
-      <motion.div
-        className="mx-auto max-w-[92rem] px-[6vw] pt-6 pb-28 md:pb-36"
-        initial={{ opacity: 0, y: 28 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.3 }}
-        transition={{ duration: 0.85, ease }}
-      >
-        <div className="grid gap-10 md:grid-cols-2 md:gap-6">
-          {frames.map((frame) => (
-            <InspectableFrame key={frame.label} frame={frame} />
-          ))}
-        </div>
-
-        <p className="mt-10 max-w-[26rem] text-[0.78rem] leading-relaxed tracking-[0.04em] text-muted">
-          Both frames come from the film above — its first and its last. The
-          right-hand car is rinsed and still wet, seconds after the door closed.
-          It is not a finished, dried reveal. Press and hold either frame to
-          inspect it at full resolution.
-        </p>
-      </motion.div>
+    <section id="frames" className="bg-[var(--house-ink)] text-[var(--house-paper)]">
+      <div className="px-[5vw] pt-16 md:pt-20">
+        <p className="text-[0.8rem] text-[var(--house-paper)]/65">Frames</p>
+        <h2 className="house-display mt-6 max-w-[12ch] text-[clamp(2.6rem,6vw,5rem)]">
+          First and last. Nothing in between is a still.
+        </h2>
+      </div>
+      {frames.map((frame) => (
+        <InspectableFrame key={frame.label} frame={frame} />
+      ))}
+      <p className="max-w-[28rem] px-[5vw] pt-4 pb-20 text-[0.85rem] leading-relaxed text-[var(--house-paper)]/65">
+        Both frames come from the film above. Press and hold to inspect at full
+        resolution. The right-hand car is still wet.
+      </p>
     </section>
   );
 }
@@ -112,10 +91,10 @@ function InspectableFrame({ frame }: { frame: (typeof frames)[number] }) {
   const release = useCallback(() => setSpot(null), []);
 
   return (
-    <figure className="m-0">
+    <figure className="m-0 grid md:grid-cols-2">
       <div
         ref={boxRef}
-        className="relative aspect-[16/9] w-full touch-none overflow-hidden bg-ink outline-none focus-visible:ring-1 focus-visible:ring-panel-fg"
+        className="relative aspect-[16/9] w-full touch-none overflow-hidden bg-ink outline-none focus-visible:ring-1 focus-visible:ring-[var(--house-paper)]"
         tabIndex={0}
         role="button"
         aria-label={`Press and hold to inspect: ${frame.label}`}
@@ -140,14 +119,17 @@ function InspectableFrame({ frame }: { frame: (typeof frames)[number] }) {
           src={frame.src}
           alt={frame.alt}
           fill
-          sizes="(min-width: 768px) 44vw, 88vw"
+          sizes="(min-width: 768px) 50vw, 100vw"
           className="object-cover"
           draggable={false}
         />
         <Loupe src={frame.loupe} active={Boolean(spot)} spot={spot} />
       </div>
-      <figcaption className="mt-4 border-t border-rule-inv pt-3">
-        <p className="type-label text-muted">{frame.label}</p>
+      <figcaption className="flex flex-col justify-end px-[5vw] py-10 md:px-12 md:py-16">
+        <p className="text-[0.8rem] text-[var(--house-paper)]/65">{frame.label}</p>
+        <p className="house-display mt-5 max-w-[14ch] text-[clamp(1.8rem,4vw,3.25rem)]">
+          {frame.line}
+        </p>
       </figcaption>
     </figure>
   );

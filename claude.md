@@ -43,7 +43,7 @@
 
 A scroll-controlled cinematic clip of one car being washed on a private estate driveway — **static
 camera, golden-hour light, glossy black paint disappearing under hand-sprayed foam as you scroll** —
-followed by a short trust statement and a before/after comparison, ending in a BOOK CTA.
+then a longer house page under the pin (statement, drive, sequence, honest frames, request a time).
 
 The user should feel: *"I'm watching this happen in real time as I scroll,"* not *"I'm scrolling a
 website."* Scroll position IS the clip's playhead — nothing more, nothing less.
@@ -70,8 +70,8 @@ encoded (every frame a keyframe), whose `currentTime` is driven directly by damp
   mechanism for the hero.
 
 **One full-bleed stage, normal document flow below it.** The hero clip is `position: fixed`
-for a vertical scroll runway; Trust / comparison / booking sit in a `relative z-10` stack and
-cover it as they arrive. GSAP ScrollTrigger maps runway scroll → progress only — **it does not
+for a vertical scroll runway; the house stack (`AfterPin`) sits in a `relative z-10` stack and
+covers it as it arrives. GSAP ScrollTrigger maps runway scroll → progress only — **it does not
 `pin` the film.** Pinning writes a transform onto the trigger, and iOS Safari then paints
 `<video>` black (even an identity matrix). Do not put `pin: true` or `anticipatePin` back on
 any ancestor of the `<video>`.
@@ -96,28 +96,29 @@ frame top-left.
 
 ---
 
-## 4. Art Direction — **ESTATE (LOCKED 2026-09-08, v3)**
+## 4. Art Direction — **ESTATE film / HOUSE below pin (2026-09-10)**
 
-> The authoritative spec is **`docs/DESIGN_DIRECTION.md`** — read it before writing any style code.
-> This replaces v2's MINERAL (brutal monochrome, Anton type, forced grayscale grade) entirely.
+> The authoritative spec is **`docs/DESIGN_DIRECTION.md`**. Vault: `docs/REFERENCE_VAULT.md`.
+> Film colour is unchanged (full native golden hour). Below-pin look was rebuilt from an
+> Awwwards + Dribbble hunt — limestone / charcoal house, not cream Fraunces on hairlines.
 
-**Direction: ESTATE.** The film plays in **full native colour** — golden-hour light, warm stone,
-palm green — because that warmth *is* the reference look; forcing a grayscale grade (v2's approach)
-would destroy the exact thing that sold this direction. UI chrome stays achromatic (ink/paper/warm
-neutral grey) so the only saturated colour on the page is the light in the footage itself — same
-underlying principle as v2, just no longer applied to the footage too.
+**Film: ESTATE.** Full native colour. Overlay stays quiet and achromatic so the only saturated
+colour on the pin is the light in the footage.
 
-Elegant serif display type (**Fraunces**) for the wordmark and the trust-panel headline, paired with
-small tracked-out **Archivo** labels (carried over from v2 — it already reads well small).
+**Below the pin: HOUSE.** Charcoal `#1C2329` and limestone `#DAD0C1`. Display is **Instrument Serif**
+(sentence case). Body is **Instrument Sans**. One hard rectangle for Book. No tracked small-caps,
+no leftover Trust → Comparison → Booking.
 
-**UI (only what's necessary):** wordmark · minimal nav · hairline progress rail + numeral · CTA ·
-one section label per beat.
+**UI:** film wordmark + Book (leaves with the pin) · house rail after the pin · playhead numeral ·
+one station label per beat.
 
 **Forbidden:** SaaS gradients · glassmorphism · card grids · rounded-everything · sci-fi portals ·
-game-like visuals · visible human detailer · clutter · decorative motion with no purpose.
+game-like visuals · visible human detailer · clutter · decorative motion with no purpose ·
+copying Amali / Carlyle / O’Gara / KCS as the page.
 
 Motion: restrained. fade / translate / clip-reveal. No bounce, no random parallax, no generic
 scroll-reveals everywhere. **Scroll damping is mandatory — see `docs/SCROLL_MECHANICS.md`.**
+**Never `whileInView` as the page.**
 
 ---
 
@@ -136,14 +137,13 @@ The experience is now **two phases**, not one long multi-beat film:
    `PIN_RUNWAY_VH = 13`. Clip 1, clip 2 and both remainder takes stay on
    disk and are no longer served. Wax is not in the film. 4K JPGs remain
    the comparison loupe.
-2. **Normal scroll flow (released, ~85–100%)** — Trust panel ("THE STANDARD ON YOUR STREET." — placeholder copy) →
-   Before/After comparison → **Request a time** (the booking composer, `docs/BOOKING_COMPOSER.md`).
-   These are ordinary stacked sections, not pinned. The composer replaces the old dead `#book`
-   anchor; it is the only section added in v3.1 and the page ends there.
+2. **Released house (after the pin)** — ordinary stacked sections, not pinned. Named in
+   `docs/DESIGN_DIRECTION.md` §6: house rail → statement → the drive → sequence (signed
+   stations only) → honest frames → request a time (`docs/BOOKING_COMPOSER.md`) → compass close.
+   Leftover Trust / Comparison / Booking is dead. No new routes — one uninterrupted scroll.
 
-This is a deliberate simplification from v2's eight-beat wash-bay-to-departure narrative: one
-continuous drone take carries the whole wash, and anything added later chains onto the same pin
-rather than becoming a new page section.
+The film is still one continuous take. Length below the pin comes from named house sections,
+not a second clip.
 
 ---
 
@@ -218,15 +218,17 @@ later) can be swapped without touching the rest of the site.
 app/
   layout.tsx  page.tsx  globals.css
   components/
-    Navigation.tsx  ScrollProgress.tsx  CtaSection.tsx  TrustPanel.tsx  BeforeAfter.tsx
+    Navigation.tsx  ScrollProgress.tsx  AfterPin.tsx
+    HouseRail.tsx  HouseStatement.tsx  HouseDrive.tsx  HouseSequence.tsx
+    HouseFrames.tsx  HouseClose.tsx  BookingComposer.tsx
     experience/  CinematicStage.tsx  VideoScrubber.tsx  FrameScrubber.tsx(fallback)  SceneOverlay.tsx  LoadingScreen.tsx
 lib/
   scene/sceneTimeline.ts     # phase/station timing — single source
   animation/easing.ts
   utils/useScrollProgress.ts
 public/
-  video/                     # lambo-wash-01.mp4 + -scrub.mp4
-  images/                    # stills, reference, logo
+  video/                     # served pair in FILM
+  images/                    # stills, reference
 ```
 
 ---
@@ -271,7 +273,7 @@ See `SETUP.md` for environment status (already verified, nothing to redo).
 
 ## 11. Definition of Done — Rough Draft
 
-1. `npm run dev` runs clean. 2. Page pins and vertically scroll-scrubs the served all-intra trim (`lambo-wash-full-scrub-take1-trim.mp4`, or its verified v3.1 re-cut) smoothly, forward and backward, with no stutter. 3. Placeholder renders correctly with zero media present. 4. Dropping a real second clip upgrades the experience with no code change beyond the timeline config. 5. Trust panel and before/after sections render below the released scroll. 6. Hero matches the reference clip framing (static, side profile, driveway). 7. Ends in a premium BOOK CTA that links out. 8. Mobile scrolls and scrubs. 9. No SaaS look, no invented assets, no claim the car is "clean" when the only footage shown is dirty→foamed.
+1. `npm run dev` runs clean. 2. Page pins and vertically scroll-scrubs the served all-intra trim (`lambo-wash-full-scrub-take1-trim.mp4`, or its verified v3.1 re-cut) smoothly, forward and backward, with no stutter. 3. Placeholder renders correctly with zero media present. 4. Dropping a real second clip upgrades the experience with no code change beyond the timeline config. 5. House sections in DESIGN_DIRECTION §6 render below the released scroll. 6. Hero matches the reference clip framing (static, side profile, driveway). 7. Ends in a premium BOOK CTA that links out. 8. Mobile scrolls and scrubs. 9. No SaaS look, no invented assets, no claim the car is "clean" when the only footage shown is dirty→foamed.
 
 **Added in v3.1:** 10. Desktop gets the upres variant and mobile gets 720p — verified by watching which file is actually requested under iPhone-class emulation. 11. No frame over 16.7 ms sustained while scrubbing on either path, with the CPU throttled 4×. 12. At most one video seek in flight at any moment. 13. The booking composer composes a visible message and hands off to a single placeholder link constant. 14. `prefers-reduced-motion` is honored by every section, not just the scroll hook.
 

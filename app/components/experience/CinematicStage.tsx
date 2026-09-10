@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useCallback, useRef, useState } from "react";
+import { Navigation } from "@/app/components/Navigation";
 import { FrameScrubber } from "@/app/components/experience/FrameScrubber";
 import { LoadingScreen } from "@/app/components/experience/LoadingScreen";
 import { SceneOverlay } from "@/app/components/experience/SceneOverlay";
@@ -96,6 +97,7 @@ export function CinematicStage() {
           visible={showLoading}
           progress={waiting && loadProgress == null ? null : loadProgress}
         />
+        <Navigation />
       </div>
       <section
         ref={runwayRef}
@@ -116,7 +118,7 @@ function FilmPlaceholder() {
         <p className="type-display mt-5 max-w-[16ch] text-[clamp(2rem,6vw,4.5rem)] text-panel-fg">
           Place the scrub clip to begin.
         </p>
-        <p className="mt-6 max-w-[26rem] text-[0.8rem] leading-relaxed tracking-[0.04em] text-muted">
+        <p className="mt-6 max-w-[26rem] text-[0.8rem] leading-relaxed text-muted">
           Missing{" "}
           <span className="text-panel-fg">public{FILM.scrub}</span>
           {" / "}

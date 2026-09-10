@@ -68,9 +68,9 @@ function decorateCalendlyUrl(base: string, vehicle: string, town: string) {
   try {
     const url = new URL(base);
     url.searchParams.set("hide_gdpr_banner", "1");
-    url.searchParams.set("background_color", "f6f2e9");
-    url.searchParams.set("text_color", "0e0d0b");
-    url.searchParams.set("primary_color", "0e0d0b");
+    url.searchParams.set("background_color", "dad0c1");
+    url.searchParams.set("text_color", "1c2329");
+    url.searchParams.set("primary_color", "1c2329");
     if (town.trim()) url.searchParams.set("location", town.trim());
     if (vehicle.trim()) url.searchParams.set("a1", vehicle.trim());
     if (town.trim()) url.searchParams.set("a2", town.trim());
@@ -312,20 +312,16 @@ export function BookingComposer() {
   }, [when]);
 
   return (
-    <section id="book" data-tone="light" className="bg-paper text-paper-fg">
-      <motion.div
-        className="mx-auto flex min-h-[100dvh] max-w-[92rem] flex-col justify-end px-[6vw] pt-24 pb-16 md:pb-20"
+    <section id="book" className="bg-[var(--house-stone)] text-[var(--house-ink)]">
+      <div
+        className="mx-auto flex min-h-[100dvh] max-w-[92rem] flex-col justify-end px-[5vw] pt-24 pb-16 md:pb-20"
         style={{ paddingBottom: "max(4rem, env(safe-area-inset-bottom))" }}
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true, amount: 0.3 }}
-        transition={{ duration: 0.85, ease }}
       >
-        <p className="type-label text-muted">Booking</p>
-        <h2 className="type-display mt-6 max-w-[12ch] text-[length:var(--display-size)]">
+        <p className="text-[0.8rem] text-[var(--house-muted)]">Booking</p>
+        <h2 className="house-display mt-6 max-w-[12ch] text-[clamp(2.8rem,7vw,5.5rem)]">
           Request a time.
         </h2>
-        <p className="mt-6 max-w-[26rem] text-[0.82rem] leading-relaxed tracking-[0.04em] text-muted">
+        <p className="mt-6 max-w-[26rem] text-[0.9rem] leading-relaxed text-[var(--house-muted)]">
           One question at a time. A live slot holds the calendar, then a text
           goes to the team.
         </p>
@@ -378,7 +374,7 @@ export function BookingComposer() {
                     <button
                       type="button"
                       onClick={() => go("vehicle")}
-                      className="type-label mt-8 flex min-h-[52px] w-full items-center justify-between border-y border-ink text-ink"
+                      className="house-cta mt-8"
                     >
                       Continue
                     </button>
@@ -388,7 +384,7 @@ export function BookingComposer() {
 
               {step === "vehicle" ? (
                 <form onSubmit={submitVehicle}>
-                  <label htmlFor={vehicleId} className="type-label text-muted">
+                  <label htmlFor={vehicleId} className="text-[0.8rem] text-[var(--house-muted)]">
                     Vehicle
                   </label>
                   <input
@@ -403,7 +399,7 @@ export function BookingComposer() {
                     placeholder="Year, make, model"
                     autoComplete="off"
                     enterKeyHint="next"
-                    className="mt-4 block min-h-[52px] w-full border-0 border-b border-rule bg-transparent pb-3 text-[0.95rem] tracking-[0.02em] text-ink outline-none placeholder:text-muted focus:border-ink"
+                    className="mt-4 block min-h-[52px] w-full border-0 border-b border-[var(--house-rule)] bg-transparent pb-3 text-[0.95rem] text-[var(--house-ink)] outline-none placeholder:text-[var(--house-muted)] focus:border-[var(--house-ink)]"
                   />
                   <Continue />
                 </form>
@@ -411,7 +407,7 @@ export function BookingComposer() {
 
               {step === "town" ? (
                 <form onSubmit={submitTown}>
-                  <label htmlFor={townId} className="type-label text-muted">
+                  <label htmlFor={townId} className="text-[0.8rem] text-[var(--house-muted)]">
                     Town
                   </label>
                   <input
@@ -426,7 +422,7 @@ export function BookingComposer() {
                     placeholder="Where should we come"
                     autoComplete="address-level2"
                     enterKeyHint="next"
-                    className="mt-4 block min-h-[52px] w-full border-0 border-b border-rule bg-transparent pb-3 text-[0.95rem] tracking-[0.02em] text-ink outline-none placeholder:text-muted focus:border-ink"
+                    className="mt-4 block min-h-[52px] w-full border-0 border-b border-[var(--house-rule)] bg-transparent pb-3 text-[0.95rem] text-[var(--house-ink)] outline-none placeholder:text-[var(--house-muted)] focus:border-[var(--house-ink)]"
                   />
                   <Continue />
                 </form>
@@ -447,10 +443,10 @@ export function BookingComposer() {
           </div>
 
           <div className="flex flex-col justify-end">
-            <p className="type-label text-muted">Your request</p>
+            <p className="text-[0.8rem] text-[var(--house-muted)]">Your request</p>
             <output
               aria-live="polite"
-              className="mt-4 block border-t border-rule pt-4 text-[0.9rem] leading-relaxed tracking-[0.02em] text-ink"
+              className="mt-4 block border-t border-[var(--house-rule)] pt-4 text-[0.9rem] leading-relaxed text-[var(--house-ink)]"
             >
               {message}
             </output>
@@ -473,20 +469,16 @@ export function BookingComposer() {
                 }
                 focusGap();
               }}
-              className={`type-label mt-10 flex min-h-[52px] w-full items-center justify-between border-y pb-0 transition-colors duration-300 ${
-                canText || canHold
-                  ? "border-ink text-ink"
-                  : "border-rule text-muted"
-              }`}
+              className="house-cta mt-10"
             >
               {held ? "Text this time" : "Hold this time"}
             </a>
-            <p className="mt-4 text-[0.7rem] leading-relaxed tracking-[0.04em] text-muted">
+            <p className="mt-4 text-[0.75rem] leading-relaxed text-[var(--house-muted)]">
               {helper()}
             </p>
           </div>
         </div>
-      </motion.div>
+      </div>
     </section>
   );
 }
@@ -495,7 +487,7 @@ function Continue() {
   return (
     <button
       type="submit"
-      className="type-label mt-8 flex min-h-[52px] w-full items-center justify-between border-y border-ink text-ink"
+      className="house-cta mt-8"
     >
       Continue
     </button>
@@ -515,10 +507,10 @@ function Summary({
     <button
       type="button"
       onClick={onEdit}
-      className="flex min-h-[52px] w-full items-center justify-between gap-6 border-b border-rule text-left"
+      className="flex min-h-[52px] w-full items-center justify-between gap-6 border-b border-[var(--house-rule)] text-left"
     >
-      <span className="type-label text-muted">{label}</span>
-      <span className="truncate text-[0.9rem] tracking-[0.02em] text-ink">
+      <span className="text-[0.8rem] text-[var(--house-muted)]">{label}</span>
+      <span className="truncate text-[0.9rem] text-[var(--house-ink)]">
         {value}
       </span>
     </button>
@@ -547,25 +539,25 @@ function TimeStep({
 
   return (
     <fieldset ref={ref} className="m-0 border-0 p-0">
-      <legend className="type-label p-0 text-muted">Time</legend>
+      <legend className="p-0 text-[0.8rem] text-[var(--house-muted)]">Time</legend>
       {!linked && status !== "loading" ? (
-        <p className="mt-4 border-t border-rule pt-4 text-[0.9rem] leading-relaxed tracking-[0.02em] text-muted">
+        <p className="mt-4 border-t border-[var(--house-rule)] pt-4 text-[0.9rem] leading-relaxed text-[var(--house-muted)]">
           Calendar not linked. Live times will appear here — nothing is held
           yet.
         </p>
       ) : null}
       {status === "loading" ? (
-        <p className="mt-4 border-t border-rule pt-4 text-[0.9rem] leading-relaxed tracking-[0.02em] text-muted">
+        <p className="mt-4 border-t border-[var(--house-rule)] pt-4 text-[0.9rem] leading-relaxed text-[var(--house-muted)]">
           Looking up live times.
         </p>
       ) : null}
       {status === "ready" && configured && slots.length === 0 ? (
-        <p className="mt-4 border-t border-rule pt-4 text-[0.9rem] leading-relaxed tracking-[0.02em] text-muted">
+        <p className="mt-4 border-t border-[var(--house-rule)] pt-4 text-[0.9rem] leading-relaxed text-[var(--house-muted)]">
           No live times in the next seven days.
         </p>
       ) : null}
       {status === "ready" && !configured && pageUrl ? (
-        <p className="mt-4 border-t border-rule pt-4 text-[0.9rem] leading-relaxed tracking-[0.02em] text-muted">
+        <p className="mt-4 border-t border-[var(--house-rule)] pt-4 text-[0.9rem] leading-relaxed text-[var(--house-muted)]">
           Open the calendar to pick a free time. That holds the slot.
         </p>
       ) : null}
@@ -573,16 +565,16 @@ function TimeStep({
         <div className="mt-4">
           {groups.map((group) => (
             <div key={group.day}>
-              <p className="type-label mt-8 text-muted first:mt-0">{group.day}</p>
-              <div className="mt-4 border-t border-rule">
+              <p className="mt-8 text-[0.8rem] text-[var(--house-muted)] first:mt-0">{group.day}</p>
+              <div className="mt-4 border-t border-[var(--house-rule)]">
                 {group.slots.map((slot) => {
                   const selected = slot.schedulingUrl === value;
                   return (
                     <label
                       key={slot.schedulingUrl}
-                      className={`type-label flex min-h-[52px] cursor-pointer items-center border-b border-rule transition-colors duration-200 ${
-                        selected ? "text-ink" : "text-muted"
-                      } has-[:focus-visible]:text-ink`}
+                      className={`flex min-h-[52px] cursor-pointer items-center border-b border-[var(--house-rule)] text-[0.9rem] transition-colors duration-200 ${
+                        selected ? "text-[var(--house-ink)]" : "text-[var(--house-muted)]"
+                      } has-[:focus-visible]:text-[var(--house-ink)]`}
                     >
                       <input
                         type="radio"
@@ -595,7 +587,7 @@ function TimeStep({
                       <span
                         aria-hidden
                         className={`mr-4 h-px w-6 transition-colors duration-200 ${
-                          selected ? "bg-ink" : "bg-rule"
+                          selected ? "bg-[var(--house-ink)]" : "bg-[var(--house-rule)]"
                         }`}
                       />
                       {formatTime(slot.start)}
@@ -634,16 +626,16 @@ function Choice({
 }) {
   return (
     <fieldset ref={ref} className="m-0 border-0 p-0">
-      <legend className="type-label p-0 text-muted">{legend}</legend>
-      <div className="mt-4 border-t border-rule">
+      <legend className="p-0 text-[0.8rem] text-[var(--house-muted)]">{legend}</legend>
+      <div className="mt-4 border-t border-[var(--house-rule)]">
         {options.map((option) => {
           const selected = option.label === value;
           return (
             <label
               key={option.id}
-              className={`type-label flex min-h-[52px] cursor-pointer items-center border-b border-rule transition-colors duration-200 ${
-                selected ? "text-ink" : "text-muted"
-              } has-[:focus-visible]:text-ink`}
+              className={`flex min-h-[52px] cursor-pointer items-center border-b border-[var(--house-rule)] text-[0.95rem] transition-colors duration-200 ${
+                selected ? "text-[var(--house-ink)]" : "text-[var(--house-muted)]"
+              } has-[:focus-visible]:text-[var(--house-ink)]`}
             >
               <input
                 type="radio"
@@ -656,7 +648,7 @@ function Choice({
               <span
                 aria-hidden
                 className={`mr-4 h-px w-6 transition-colors duration-200 ${
-                  selected ? "bg-ink" : "bg-rule"
+                  selected ? "bg-[var(--house-ink)]" : "bg-[var(--house-rule)]"
                 }`}
               />
               {option.label}

@@ -1,22 +1,21 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { Archivo, Fraunces } from "next/font/google";
+import { Instrument_Sans, Instrument_Serif } from "next/font/google";
 import { MotionProvider } from "./components/MotionProvider";
 import { SmoothScroll } from "./components/SmoothScroll";
 import "./globals.css";
 
-const fraunces = Fraunces({
+const instrumentSerif = Instrument_Serif({
   subsets: ["latin"],
-  display: "swap",
-  axes: ["opsz"],
-  variable: "--font-fraunces",
+  weight: "400",
+  variable: "--font-instrument-serif",
 });
 
-const archivo = Archivo({
+const instrumentSans = Instrument_Sans({
   subsets: ["latin"],
   display: "swap",
-  weight: ["400", "500", "600", "700", "800"],
-  variable: "--font-archivo",
+  weight: ["400", "500", "600"],
+  variable: "--font-instrument-sans",
 });
 
 export const metadata: Metadata = {
@@ -33,7 +32,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${fraunces.variable} ${archivo.variable} h-full antialiased`}
+      className={`${instrumentSerif.variable} ${instrumentSans.variable} h-full antialiased`}
     >
       <body className="min-h-full bg-ink text-panel-fg">
         <SmoothScroll />
