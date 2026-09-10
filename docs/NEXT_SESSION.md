@@ -47,13 +47,25 @@ Production https://carwasher.vercel.app was promoted 2026-09-09 to the 4K commit
 (`dpl_HzWQnZc4GFJCsJH4mAdLjzjBitnm`). Previews are SSO-gated — share production only.
 Git push deploys a preview; promote that. Do not `vercel --prod` from this tree.
 
+**Custom domain (done 2026-09-09 — do not redo attach):**
+- Apex `https://ctluxurydetails.com` and `www.ctluxurydetails.com` are on Vercel
+  project `carwasher` (team `theempps-projects`), production, not a preview branch.
+- Redirect: `www` → apex, 308.
+- Registrar: GoDaddy. Nameservers stay `ns69.domaincontrol.com` /
+  `ns70.domaincontrol.com`. Do not move NS to Vercel.
+- Records (rank 1 for this project): A `@` → `216.198.79.1` and `64.29.17.1`;
+  CNAME `www` → `ddb3d890badd77c3.vercel-dns-017.com`.
+- Designer signed the live domain 2026-09-09 ("everything is good here").
+  `carwasher.vercel.app` stays as a working alias.
+
 ## Already done — do not redo
 P1 one-seek-in-flight · P2 grade bake · P3 ignoreMobileResize · P4a scrollerProxy
 removed · P5 lenis refcount · P6 loading readout · P8 grain/scrim · booking composer
 scaffold · nav invert · document rail · Trust reveal · Before/After 4K loupe ·
 MotionProvider · C4 tablet exclusion · C1 SEEK_EPSILON 0.02 · faststart 720+1080 ·
 iOS poster/unlock · video Cache-Control immutable · v3.1.2 fixed film layer (no
-GSAP pin on `<video>`) · v3.1.3 desktop 4K + Blob Range + no `translateZ` on video.
+GSAP pin on `<video>`) · v3.1.3 desktop 4K + Blob Range + no `translateZ` on video ·
+custom domain `ctluxurydetails.com` on project `carwasher` (www → apex).
 
 ## Next (copy and channel — not more film)
 The 25.33s trim is the whole hero. Do not generate remainder, rinse, or a new upres
@@ -75,7 +87,8 @@ unless the designer types a standalone `GO` after a quoted cost.
 
 ## Standing constraints
 Branch `cursor/nextjs-agent-rules`, never `main`. Repo `github.com:theempp/carwasher.git`.
-Vercel project `carwasher`. Public production: https://carwasher.vercel.app.
+Vercel project `carwasher`. Public production: https://ctluxurydetails.com
+(www 308s here). Alias still live: https://carwasher.vercel.app.
 Vertical only, damping k=0.09, `cineEase` in `easing.ts` only. Never hard-code scene %
 outside `sceneTimeline.ts`. Media stays behind `<CinematicStage>`. Missing media →
 labeled placeholder, never a fake claim. ESTATE tokens; film in full native colour.

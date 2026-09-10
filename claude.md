@@ -33,6 +33,9 @@
 > fallback. Designer signed this look 2026-09-09 ("keep this version"). Do not revert
 > to 1080. No `translateZ` on `<video>`. Interior I-frames can hitch. Do not hand 4K
 > to a phone. Pickup: `docs/NEXT_SESSION.md`.
+> ⚠️ **UPDATE 2026-09-09 (night) — custom domain.** Production also serves
+> `https://ctluxurydetails.com` (www 308s to apex). `carwasher.vercel.app` stays.
+> DNS stays at GoDaddy. Do not redo domain attach. Pickup: `docs/NEXT_SESSION.md`.
 
 ---
 
