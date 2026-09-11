@@ -1,6 +1,14 @@
 export const DAMPING = 0.09;
 
 /**
+ * Finest playhead step, in seconds. The film is 24fps (one frame = 1/24).
+ * Two frames is the smallest step that still looks like footage once
+ * damping is applied; finer than that only multiplies decoder work.
+ * Tune here only.
+ */
+export const SEEK_EPSILON = 2 / 24;
+
+/**
  * Vertical pin runway in viewport-heights. Single tuning knob for pacing.
  * Clip 1 (5.04s) used 5. The 25.33s film at that density would crawl, so the
  * runway is far denser per second — the film should feel somewhat fast.

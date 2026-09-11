@@ -1,12 +1,12 @@
-# Next Session — pick up here (written 2026-09-10, HOUSE locked)
+# Next Session — pick up here (written 2026-09-10 night)
 
 The film and the scroll machine are still signed. Desktop 4K stays. **No Higgsfield spend.**
 Do not fire 1080 / 2K / 4K again. Do not revert desktop to 1080.
 
-**HOUSE below-pin is locked 2026-09-10.** Designer: save here, pick up in a new chat with edits.
-Do not restore leftover Trust → Comparison → Booking. Do not copy the KCS shop (Syne,
-split-field packages). Film overlay stays quiet; below the pin is charcoal / limestone,
-Instrument Serif + Instrument Sans.
+**HOUSE below-pin is locked 2026-09-10.** **HOUSE motion shipped the same night:** clip
+handoffs between slabs + sequence ticking. Designer asked for both; `transitions-parts`
+stayed closed. Do not restore leftover Trust → Comparison → Booking. Do not copy the
+KCS shop. Do not restore the old fade-and-slide `HouseMotion` stub.
 
 ## Read in this order
 1. `CLAUDE.md` — v3.1.3 banner, §2 (no pin on the film), §4 HOUSE, §5–7, §10 (rules 11–15).
@@ -24,6 +24,17 @@ Instrument Serif + Instrument Sans.
 - **HOUSE below-pin, locked 2026-09-10.** Rail → statement → drive → sequence slabs
   (signed stations only) → honest frames + loupe → request a time → compass close.
   Leftover `TrustPanel` / `BeforeAfter` are deleted. Do not bring them back.
+- **HOUSE motion, shipped 2026-09-10 night.** `HouseMotion` wraps `.after-pin`.
+  Slabs use `[data-house-slab]` clip-reveals (wipe from the top edge, scrubbed,
+  reversible). Sequence uses `[data-house-station]` + `is-active`. Knobs only in
+  `lib/animation/houseMotion.ts`. Booking has no scroll entrance. Reduced motion
+  snaps slabs open and skips the tick. No second pin. No `cineEase` below the pin.
+  No `whileInView`. No `transitions-parts`.
+- **4K decode relief, same night.** `.film-stage.is-covered` hides video + grain
+  once `.after-pin` covers the film. Grain has no `mix-blend-mode`. Lenis is
+  desktop-only (`preferNativeScroll` in `lenis.ts`). `SEEK_EPSILON` is `2/24` in
+  `sceneTimeline.ts`, with an adaptive gate + 20 Hz floor in `useScrollProgress`.
+  Do not put `SEEK_EPSILON` back to `0.02` unless they ask.
 - **Booking composer stays.** SMS / Calendly logic is intact; only the surface changed.
 - **Do not restore `ScrollTrigger` `pin` / `anticipatePin` on the film.** Progress comes
   from an empty runway. Film is `.film-stage` (`position: fixed`, no transform).
@@ -71,28 +82,32 @@ Git push deploys a preview; promote that. Do not `vercel --prod` from this tree.
 P1 one-seek-in-flight · P2 grade bake · P3 ignoreMobileResize · P4a scrollerProxy
 removed · P5 lenis refcount · P6 loading readout · P8 grain/scrim · booking composer
 scaffold · nav invert · document rail · Trust reveal · Before/After 4K loupe ·
-MotionProvider · C4 tablet exclusion · C1 SEEK_EPSILON 0.02 · faststart 720+1080 ·
+MotionProvider · C4 tablet exclusion · C1 seek floor (now `2/24`, was 0.02) · faststart 720+1080 ·
 iOS poster/unlock · video Cache-Control immutable · v3.1.2 fixed film layer (no
 GSAP pin on `<video>`) · v3.1.3 desktop 4K + Blob Range + no `translateZ` on video ·
-custom domain `ctluxurydetails.com` on project `carwasher` (www → apex).
+custom domain `ctluxurydetails.com` on project `carwasher` (www → apex) ·
+HOUSE clip handoffs + sequence tick · film hidden when covered · no grain blend ·
+no Lenis on phones · `SEEK_EPSILON` `2/24` + adaptive gate.
 
 ## Next (edits on the locked HOUSE — not more film)
 The 25.33s trim is the whole hero. Do not generate remainder, rinse, or a new upres
 unless the designer types a standalone `GO` after a quoted cost.
 
-Designer will bring **edits** in a new chat. Start from this locked look; do not restyle
-the whole house again unless they ask.
+Start from this locked look **and** the shipped HOUSE motion. Do not restyle the
+whole house. Do not add a second motion library.
 
-1. **Edits they name** — type, colour, section order, buttons, copy. Look docs + vault win.
+1. **Edits they name** — type, colour, section order, buttons, copy, or motion feel
+   (tune `houseMotion.ts` / station CSS). Look docs + vault win.
 2. **Signed words** — station copy in `sceneTimeline.ts`, house headline
    ("The standard on your street."), frame labels, booking tier names. Placeholder
    until signed. Never invent prices, turnaround, or "spotless / finished / after."
 3. **Booking channel** — SMS is `+14752898400`. Calendly page is still empty. Wire the
    calendar when the owner names it. No backend.
 4. **Real iPhone check** — still owed on production after the next promote. Confirm
-   the 720 file paints (not black). Desktop 4K is already signed.
+   the 720 file paints (not black) **and** that native scroll (no Lenis) still scrubs.
+   Desktop 4K is already signed.
 5. C2 (gate scroll until buffered) and C3 (drop extra ScrollTrigger.update) stay
-   gated unless the designer asks.
+   gated unless the designer asks. The adaptive seek gate is already in.
 
 ## Standing constraints
 Branch `cursor/nextjs-agent-rules`, never `main`. Repo `github.com:theempp/carwasher.git`.

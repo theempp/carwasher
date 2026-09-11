@@ -164,6 +164,7 @@ export function VideoScrubber({
     // still composite a black surface. Hide the still only after a real frame.
     const afterFrame = () => {
       if (!video.paused) video.pause();
+      if (video.videoWidth < 1) return;
       markPainted();
     };
     requestPaint(video, afterFrame);

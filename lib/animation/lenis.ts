@@ -32,10 +32,32 @@ function publishRuntime() {
   };
 }
 
+function preferNativeScroll() {
+  const touchOnly =
+    window.matchMedia("(pointer: coarse)").matches &&
+    window.matchMedia("(hover: none)").matches;
+  const appleTouch =
+    /iP(hone|ad|od)/.test(navigator.userAgent) ||
+    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  const smallTouch =
+    Math.min(window.innerWidth, window.innerHeight) < 500 &&
+    navigator.maxTouchPoints > 0;
+  return touchOnly || appleTouch || smallTouch;
+}
+
 export function ensureSmoothScroll(): Lenis | null {
   if (typeof window === "undefined") return null;
 
   owners += 1;
+
+  // Phones and tablets keep native touch scroll. Lenis on iOS fights the
+  // scrub loop (delayed rAF + a second ScrollTrigger.update) and is what
+  // made the film feel like it was not playing under a thumb.
+  if (preferNativeScroll()) {
+    publishRuntime();
+    return null;
+  }
+
   if (lenis) {
     publishRuntime();
     return lenis;

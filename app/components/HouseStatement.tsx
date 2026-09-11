@@ -2,6 +2,7 @@ export function HouseStatement() {
   return (
     <section
       id="house"
+      data-house-slab
       className="grid min-h-[100dvh] md:grid-cols-2"
     >
       <article className="flex min-h-[80dvh] flex-col justify-between bg-[var(--house-ink)] px-[5vw] py-16 text-[var(--house-paper)] md:min-h-[100dvh] md:py-20">

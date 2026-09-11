@@ -5,6 +5,9 @@
     },
     "higgsfield": {
       "enabled": true
+    },
+    "twilio-developer-kit": {
+      "enabled": true
     }
   }
 }

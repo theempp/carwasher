@@ -2,6 +2,7 @@ export function HouseDrive() {
   return (
     <section
       id="drive"
+      data-house-slab
       className="grid min-h-[100dvh] md:grid-cols-2"
     >
       <article className="flex min-h-[70dvh] flex-col justify-end bg-[var(--house-stone)] px-[5vw] py-16 text-[var(--house-ink)] md:min-h-[100dvh] md:py-20">

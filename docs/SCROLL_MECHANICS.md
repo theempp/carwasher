@@ -77,11 +77,19 @@ tab refocuses.
 
 ## 5. Release into normal scroll
 
-Once `progress` reaches 1.0 (currently: full foam coverage), the pin releases and the page continues
-as an ordinary vertical scroll into the Trust panel and Before/After section
-(`docs/DESIGN_DIRECTION.md` §5). These sections are NOT pinned and NOT scroll-scrubbed — they're
-regular content with restrained scroll-triggered fade/translate-in, same motion vocabulary, much
-simpler mechanics (no video, no damping needed).
+Once `progress` reaches 1.0, the pin releases into ordinary vertical scroll through the
+HOUSE page (`docs/DESIGN_DIRECTION.md` §6): rail → statement → drive → sequence → frames →
+booking → close. Those slabs are **not** a second film pin and they do **not** use `cineEase`.
+
+HOUSE motion lives in `lib/animation/houseMotion.ts` + `HouseMotion`:
+- **Clip handoffs** — each `[data-house-slab]` wipes from `inset(0 0 100% 0)` to open,
+  scrubbed to scroll, reversible.
+- **Sequence tick** — one `[data-house-station]` is `is-active` at a time.
+- **Reduced motion** — slabs snap open; no tick.
+- Booking chrome stays on `motion/react`. No `whileInView`. No fade-and-slide.
+
+Tune HOUSE knobs only in `houseMotion.ts`. Tune the film only in `sceneTimeline.ts` /
+`easing.ts`.
 
 **When clip 2 + the remainder exist:** they belong on this same pinned stage, not as new page
 sections. Extend `PIN_RUNWAY_VH` so the full film still feels **somewhat fast, not slow**; add

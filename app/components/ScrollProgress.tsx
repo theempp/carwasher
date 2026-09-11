@@ -18,7 +18,9 @@ export function ScrollProgress() {
   const [onFilm, setOnFilm] = useState(true);
 
   useEffect(() => {
+    let raf = 0;
     const read = () => {
+      raf = 0;
       const max =
         document.documentElement.scrollHeight - window.innerHeight;
       const next = max > 0 ? window.scrollY / max : 0;
@@ -31,13 +33,18 @@ export function ScrollProgress() {
       }
       setOnFilm(pin.getBoundingClientRect().top > window.innerHeight - 64);
     };
+    const onScroll = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(read);
+    };
 
     read();
-    window.addEventListener("scroll", read, { passive: true });
-    window.addEventListener("resize", read);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
     return () => {
-      window.removeEventListener("scroll", read);
-      window.removeEventListener("resize", read);
+      if (raf) cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
     };
   }, []);
 

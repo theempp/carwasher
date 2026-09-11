@@ -7,19 +7,16 @@ import {
   releaseSmoothScroll,
 } from "@/lib/animation/lenis";
 import { cineEase } from "@/lib/animation/easing";
-import { DAMPING } from "@/lib/scene/sceneTimeline";
+import { DAMPING, SEEK_EPSILON } from "@/lib/scene/sceneTimeline";
 
 type UseScrollProgressOptions = {
   videoRef?: RefObject<HTMLVideoElement | null>;
 };
 
-/**
- * Seconds. One frame of the 24fps film is 41.7ms. Half a frame is the
- * finest change that can land on a different picture; seeking finer than
- * that only multiplies decoder work, which showed up as hitching on the
- * interior beat. C1 was gated as a feel change — this is the smoothness fix.
- */
-const SEEK_EPSILON = 0.02;
+/** Cap when the last seek blew the frame budget (busy 4K interior). */
+const SEEK_EPSILON_MAX = SEEK_EPSILON * 3;
+/** Wall-clock floor. The film is 24fps — more seeks than this is waste. */
+const SEEK_GAP_MS = 1000 / 20;
 
 /**
  * ms. iOS can drop `seeked` entirely when the decoder is under pressure or the
@@ -68,6 +65,10 @@ function createSeekController() {
   let lastRequested = -1;
   let pending: number | null = null;
   let watchdog = 0;
+  let issuedAt = 0;
+  let lastIssueWall = 0;
+  let lastSeekMs = 16;
+  let gate = SEEK_EPSILON;
 
   const stats: ScrubStats = {
     requests: 0,
@@ -85,14 +86,25 @@ function createSeekController() {
     }
   };
 
+  const refreshGate = (filmDeltaSec: number) => {
+    const busy = lastSeekMs > 16 ? (lastSeekMs - 16) / 1000 : 0;
+    gate = Math.min(
+      SEEK_EPSILON_MAX,
+      SEEK_EPSILON + busy + Math.max(0, filmDeltaSec) * 0.45,
+    );
+  };
+
   const issue = (video: HTMLVideoElement, t: number) => {
     lastRequested = t;
     inFlight = true;
+    issuedAt = performance.now();
+    lastIssueWall = issuedAt;
     clearWatchdog();
     watchdog = window.setTimeout(() => {
       // `seeked` never arrived. Release the gate so the next frame can retry.
       watchdog = 0;
       inFlight = false;
+      lastSeekMs = SEEK_TIMEOUT;
       if (DEV) {
         stats.timeouts += 1;
         stats.inFlight = 0;
@@ -108,13 +120,17 @@ function createSeekController() {
   };
 
   const settle = () => {
+    if (issuedAt) {
+      lastSeekMs = performance.now() - issuedAt;
+      issuedAt = 0;
+    }
     inFlight = false;
     clearWatchdog();
     if (DEV) stats.inFlight = 0;
 
     const next = pending;
     pending = null;
-    if (bound && next !== null && Math.abs(next - lastRequested) > SEEK_EPSILON) {
+    if (bound && next !== null && Math.abs(next - lastRequested) > gate) {
       issue(bound, next);
     }
   };
@@ -123,6 +139,10 @@ function createSeekController() {
     inFlight = false;
     lastRequested = -1;
     pending = null;
+    issuedAt = 0;
+    lastIssueWall = 0;
+    lastSeekMs = 16;
+    gate = SEEK_EPSILON;
     clearWatchdog();
     if (DEV) stats.inFlight = 0;
   };
@@ -135,7 +155,11 @@ function createSeekController() {
   };
 
   return {
-    request(video: HTMLVideoElement | null, progress: number) {
+    request(
+      video: HTMLVideoElement | null,
+      progress: number,
+      filmDeltaSec = 0,
+    ) {
       // The scrubber is dynamic(ssr:false), so the element arrives after this
       // hook's effect has already run. Rebind whenever it changes.
       if (video !== bound) {
@@ -155,13 +179,15 @@ function createSeekController() {
 
       if (DEV) stats.requests += 1;
 
+      refreshGate(filmDeltaSec);
       const t = progress * Math.max(0, video.duration - 0.04);
 
       if (inFlight || video.seeking) {
         pending = t;
         return;
       }
-      if (Math.abs(t - lastRequested) <= SEEK_EPSILON) return;
+      if (Math.abs(t - lastRequested) <= gate) return;
+      if (performance.now() - lastIssueWall < SEEK_GAP_MS) return;
 
       issue(video, t);
     },
@@ -217,6 +243,10 @@ export function useScrollProgress(
         },
       });
 
+      const stage = document.querySelector<HTMLElement>(".film-stage");
+      let after = document.querySelector<HTMLElement>(".after-pin");
+      let lastPaced = 0;
+
       const apply = (snap: boolean) => {
         const k = reducedMotion || snap ? 1 : DAMPING;
         current.value += (target.value - current.value) * k;
@@ -224,10 +254,25 @@ export function useScrollProgress(
           current.value = target.value;
         }
 
-        const paced = cineEase(current.value);
-        seeks.request(videoRef?.current ?? null, paced);
+        if (!after || !after.isConnected) {
+          after = document.querySelector<HTMLElement>(".after-pin");
+        }
+        const covered = Boolean(
+          after && after.getBoundingClientRect().top <= 2,
+        );
+        if (stage && stage.classList.contains("is-covered") !== covered) {
+          stage.classList.toggle("is-covered", covered);
+        }
 
-        if (snap || Math.abs(paced - lastPublished) > 0.0008) {
+        const paced = cineEase(current.value);
+        const video = videoRef?.current ?? null;
+        const filmDelta = Math.abs(paced - lastPaced) * (video?.duration || 0);
+        lastPaced = paced;
+        if (!covered) {
+          seeks.request(video, paced, filmDelta);
+        }
+
+        if (snap || Math.abs(paced - lastPublished) > 0.004) {
           lastPublished = paced;
           setProgress(paced);
         }

@@ -22,7 +22,7 @@ export function SceneOverlay({ progress }: SceneOverlayProps) {
       {stations.map((station) => {
         const opacity = stationOpacity(progress, station);
         const visible = opacity > 0.02;
-        const y = (1 - opacity) * 14;
+        const y = (1 - opacity) * 18;
 
         return (
           <div
@@ -31,9 +31,6 @@ export function SceneOverlay({ progress }: SceneOverlayProps) {
             style={{
               opacity,
               transform: `translateY(${y}px)`,
-              clipPath: station.holdOpen
-                ? undefined
-                : `inset(0 ${((1 - opacity) * 18).toFixed(2)}% 0 0)`,
             }}
             aria-hidden={!visible}
           >

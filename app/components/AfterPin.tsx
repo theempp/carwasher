@@ -2,20 +2,19 @@ import { BookingComposer } from "./BookingComposer";
 import { HouseClose } from "./HouseClose";
 import { HouseDrive } from "./HouseDrive";
 import { HouseFrames } from "./HouseFrames";
-import { HouseRail } from "./HouseRail";
+import { HouseMotion } from "./HouseMotion";
 import { HouseSequence } from "./HouseSequence";
 import { HouseStatement } from "./HouseStatement";
 
 export function AfterPin() {
   return (
-    <div className="after-pin relative z-10">
-      <HouseRail bookHref="#book" />
+    <HouseMotion>
       <HouseStatement />
       <HouseDrive />
       <HouseSequence />
       <HouseFrames />
       <BookingComposer />
       <HouseClose />
-    </div>
+    </HouseMotion>
   );
 }

@@ -56,7 +56,11 @@ function Loupe({
 
 export function HouseFrames() {
   return (
-    <section id="frames" className="bg-[var(--house-ink)] text-[var(--house-paper)]">
+    <section
+      id="frames"
+      data-house-slab
+      className="bg-[var(--house-ink)] text-[var(--house-paper)]"
+    >
       <div className="px-[5vw] pt-16 md:pt-20">
         <p className="text-[0.8rem] text-[var(--house-paper)]/65">Frames</p>
         <h2 className="house-display mt-6 max-w-[12ch] text-[clamp(2.6rem,6vw,5rem)]">

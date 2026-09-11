@@ -6,7 +6,10 @@ const LINKS = [
 
 export function HouseClose() {
   return (
-    <section className="bg-[var(--house-ink)] px-[5vw] py-16 text-[var(--house-paper)] md:py-20">
+    <section
+      data-house-slab
+      className="bg-[var(--house-ink)] px-[5vw] py-16 text-[var(--house-paper)] md:py-20"
+    >
       <p className="house-display text-[clamp(2.2rem,6vw,4.5rem)]">
         CtLuxuryDetails
       </p>

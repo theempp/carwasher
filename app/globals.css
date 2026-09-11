@@ -31,6 +31,13 @@
     rgba(0, 0, 0, 0) 78%,
     rgba(0, 0, 0, 0.4) 100%
   );
+  --house-ink: #1c2329;
+  --house-stone: #dad0c1;
+  --house-paper: #f3eee6;
+  --house-muted: #6f6a62;
+  --house-rule: rgba(28, 35, 41, 0.2);
+  --house-rule-inv: rgba(243, 238, 230, 0.28);
+  --house-rail-h: 4.75rem;
 }
 
 @theme inline {
@@ -104,11 +111,17 @@ body {
 }
 
 .film-grain {
-  opacity: 0.025;
+  opacity: 0.04;
   background-image: url("/images/film-grain.png");
   background-repeat: repeat;
-  mix-blend-mode: overlay;
+  /* No mix-blend-mode. Overlay flattens the 4K decode surface into a
+     CSS-sized bitmap — that is the soft picture and a lot of the hitch. */
   pointer-events: none;
+}
+
+.film-stage.is-covered .film-scrub,
+.film-stage.is-covered .film-grain {
+  visibility: hidden;
 }
 
 /*
@@ -150,14 +163,8 @@ body {
 }
 
 .after-pin {
-  --house-ink: #1c2329;
-  --house-stone: #dad0c1;
-  --house-paper: #f3eee6;
-  --house-muted: #6f6a62;
-  --house-rule: rgba(28, 35, 41, 0.2);
-  --house-rule-inv: rgba(243, 238, 230, 0.28);
-  --house-rail-h: 4.75rem;
   margin-top: -2px;
+  padding-top: var(--house-rail-h);
   background: var(--house-stone);
   color: var(--house-ink);
   font-family: var(--font-label);
@@ -181,14 +188,18 @@ body {
 }
 
 .house-rail {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 50;
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
   column-gap: 1.5rem;
   background: var(--house-stone);
   color: var(--house-ink);
-  padding: 0.85rem 5vw;
-  box-shadow: 0 -16px 0 var(--house-stone);
+  padding: calc(0.85rem + env(safe-area-inset-top, 0px)) 5vw 0.85rem;
 }
 
 .house-rail-links {
@@ -298,7 +309,7 @@ body {
 }
 
 @media (max-width: 639px) {
-  .after-pin {
+  :root {
     --house-rail-h: 6.75rem;
   }
 
@@ -324,9 +335,55 @@ body {
   }
 }
 
+.after-pin [data-house-station] {
+  position: relative;
+}
+
+.after-pin.is-house-motion [data-house-station]::before {
+  background: currentColor;
+  content: "";
+  height: calc(100% - 8rem);
+  left: 5vw;
+  opacity: 0.35;
+  pointer-events: none;
+  position: absolute;
+  top: 4rem;
+  transform: scaleY(0);
+  transform-origin: top center;
+  transition: transform 0.35s ease;
+  width: 1px;
+}
+
+.after-pin.is-house-motion [data-house-station] .house-display {
+  opacity: 0.58;
+  transition: opacity 0.35s ease;
+}
+
+.after-pin.is-house-motion [data-house-station].is-active::before {
+  transform: scaleY(1);
+}
+
+.after-pin.is-house-motion [data-house-station].is-active .house-display {
+  opacity: 1;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .house-cta,
   .house-rail a:not(.house-cta) {
     transition: none;
+  }
+
+  .after-pin.is-house-motion [data-house-station]::before,
+  .after-pin.is-house-motion [data-house-station] .house-display {
+    transition: none;
+  }
+
+  .after-pin.is-house-motion [data-house-station] .house-display {
+    opacity: 1;
+  }
+
+  .after-pin.is-house-motion [data-house-station]::before {
+    opacity: 0;
+    transform: none;
   }
 }

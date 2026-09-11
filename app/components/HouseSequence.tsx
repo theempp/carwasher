@@ -3,7 +3,10 @@ import { stations } from "@/lib/scene/sceneTimeline";
 export function HouseSequence() {
   return (
     <section id="sequence">
-      <header className="bg-[var(--house-ink)] px-[5vw] py-16 text-[var(--house-paper)] md:py-20">
+      <header
+        data-house-slab
+        className="bg-[var(--house-ink)] px-[5vw] py-16 text-[var(--house-paper)] md:py-20"
+      >
         <p className="text-[0.8rem] text-[var(--house-paper)]/65">The sequence</p>
         <h2 className="house-display mt-6 max-w-[12ch] text-[clamp(2.6rem,6vw,5rem)]">
           What the film already showed.
@@ -18,6 +21,7 @@ export function HouseSequence() {
         return (
           <article
             key={station.id}
+            data-house-station
             className={`flex min-h-[72dvh] flex-col justify-between px-[5vw] py-16 md:py-20 ${
               ink
                 ? "bg-[var(--house-stone)] text-[var(--house-ink)]"
