@@ -30,6 +30,9 @@ KCS shop. Do not restore the old fade-and-slide `HouseMotion` stub.
   `lib/animation/houseMotion.ts`. Booking has no scroll entrance. Reduced motion
   snaps slabs open and skips the tick. No second pin. No `cineEase` below the pin.
   No `whileInView`. No `transitions-parts`.
+- **Site rail is page-level.** `HouseRail` sits in `app/page.tsx` (wordmark → `#top`).
+  Film `Navigation` is no longer mounted. Do not put a second rail back inside
+  `AfterPin`. Loading readout sits under `--house-rail-h`.
 - **4K decode relief, same night.** `.film-stage.is-covered` hides video + grain
   once `.after-pin` covers the film. Grain has no `mix-blend-mode`. Lenis is
   desktop-only (`preferNativeScroll` in `lenis.ts`). `SEEK_EPSILON` is `2/24` in

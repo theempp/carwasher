@@ -14,7 +14,7 @@ export function LoadingScreen({ visible, progress }: LoadingScreenProps) {
 
   return (
     <div
-      className="pointer-events-none absolute top-7 left-1/2 z-30 flex -translate-x-1/2 flex-col items-center"
+      className="pointer-events-none absolute top-[calc(var(--house-rail-h)+0.7rem)] left-1/2 z-30 flex -translate-x-1/2 flex-col items-center"
       style={{
         opacity: visible ? 1 : 0,
         transition: "opacity 400ms ease",

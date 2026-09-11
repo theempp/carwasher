@@ -2,7 +2,6 @@
 
 import dynamic from "next/dynamic";
 import { useCallback, useRef, useState } from "react";
-import { Navigation } from "@/app/components/Navigation";
 import { FrameScrubber } from "@/app/components/experience/FrameScrubber";
 import { LoadingScreen } from "@/app/components/experience/LoadingScreen";
 import { SceneOverlay } from "@/app/components/experience/SceneOverlay";
@@ -97,7 +96,6 @@ export function CinematicStage() {
           visible={showLoading}
           progress={waiting && loadProgress == null ? null : loadProgress}
         />
-        <Navigation />
       </div>
       <section
         ref={runwayRef}

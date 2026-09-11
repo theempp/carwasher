@@ -7,8 +7,8 @@ const LINKS = [
 
 export function HouseRail({ bookHref }: { bookHref: string }) {
   return (
-    <nav className="house-rail sticky top-0 z-20" aria-label="House">
-      <a href="#house" className="house-display text-[1.45rem] leading-none">
+    <nav className="house-rail" aria-label="Site">
+      <a href="#top" className="house-display text-[1.45rem] leading-none">
         CtLuxuryDetails
       </a>
       <ul className="house-rail-links">
