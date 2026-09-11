@@ -51,7 +51,7 @@ From the hunt (Amali limestone, Carlyle house voice, O’Gara editorial). Restyl
 
 ## 4. Type
 
-- Wordmark on the film: **CtLuxuryDetails** (serif, overlay). It leaves with the pin.
+- Wordmark: **CtLuxuryDetails** on the page-level house rail (serif). It does not leave with the pin.
 - Below-pin display: Instrument Serif, few words, no slogan until signed.
 - Station copy stays composed into the shot.
 - One family pair for the whole site.
@@ -62,14 +62,15 @@ SaaS gradients · glassmorphism · card grids · bounce · decorative parallax �
 
 ## 6. Released sections
 
-Pin is the film (ESTATE overlay). Film Book stays quiet. Below the pin, in this order:
+Pin is the film (ESTATE overlay). One `shop-rail` is **page-level and fixed** from the first
+frame (`HouseRail` in `app/page.tsx`). It does not wait for the pin to release. Below the
+pin, in this order:
 
-1. `shop-rail` — after pin only
-2. House statement — `type-object` / `stone-field`
-3. The drive — `split-concept`
-4. The sequence — `sequence-slab` from signed stations only
-5. Frames — honest first / last stills (`type-object`), loupe intact
-6. Request a time — existing composer, restyled (`rule-field` + `hard-cta`)
-7. `compass-end`
+1. House statement — `type-object` / `stone-field`
+2. The drive — `split-concept`
+3. The sequence — `sequence-slab` from signed stations only
+4. Frames — honest first / last stills (`type-object`), loupe intact
+5. Request a time — existing composer, restyled (`rule-field` + `hard-cta`)
+6. `compass-end`
 
 Do not invent film the hero does not show. No prices until signed.

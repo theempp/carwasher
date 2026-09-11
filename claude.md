@@ -114,8 +114,9 @@ colour on the pin is the light in the footage.
 (sentence case). Body is **Instrument Sans**. One hard rectangle for Book. No tracked small-caps,
 no leftover Trust → Comparison → Booking.
 
-**UI:** film wordmark + Book (leaves with the pin) · house rail after the pin · playhead numeral ·
-one station label per beat.
+**UI:** one page-level house rail (`HouseRail` in `app/page.tsx`, wordmark → `#top`) from the
+first frame · playhead numeral on the film · one station label per beat. Film `Navigation`
+is not mounted. Do not put a second rail inside `AfterPin`.
 
 **Forbidden:** SaaS gradients · glassmorphism · card grids · rounded-everything · sci-fi portals ·
 game-like visuals · visible human detailer · clutter · decorative motion with no purpose ·
@@ -143,9 +144,10 @@ The experience is now **two phases**, not one long multi-beat film:
    disk and are no longer served. Wax is not in the film. 4K JPGs remain
    the comparison loupe.
 2. **Released house (after the pin)** — ordinary stacked sections, not pinned. Named in
-   `docs/DESIGN_DIRECTION.md` §6: house rail → statement → the drive → sequence (signed
+   `docs/DESIGN_DIRECTION.md` §6: statement → the drive → sequence (signed
    stations only) → honest frames → request a time (`docs/BOOKING_COMPOSER.md`) → compass close.
-   Leftover Trust / Comparison / Booking is dead. No new routes — one uninterrupted scroll.
+   The house rail is already on the page (fixed). Leftover Trust / Comparison / Booking is
+   dead. No new routes — one uninterrupted scroll.
 
 The film is still one continuous take. Length below the pin comes from named house sections,
 not a second clip.
@@ -223,8 +225,8 @@ later) can be swapped without touching the rest of the site.
 app/
   layout.tsx  page.tsx  globals.css
   components/
-    Navigation.tsx  ScrollProgress.tsx  AfterPin.tsx
-    HouseRail.tsx  HouseStatement.tsx  HouseDrive.tsx  HouseSequence.tsx
+    ScrollProgress.tsx  AfterPin.tsx  HouseRail.tsx (page-level, fixed)
+    HouseStatement.tsx  HouseDrive.tsx  HouseSequence.tsx
     HouseFrames.tsx  HouseClose.tsx  BookingComposer.tsx
     experience/  CinematicStage.tsx  VideoScrubber.tsx  FrameScrubber.tsx(fallback)  SceneOverlay.tsx  LoadingScreen.tsx
 lib/

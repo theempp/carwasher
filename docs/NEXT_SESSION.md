@@ -1,4 +1,4 @@
-# Next Session — pick up here (written 2026-09-10 night)
+# Next Session — pick up here (written 2026-09-10 night, rail + look docs aligned)
 
 The film and the scroll machine are still signed. Desktop 4K stays. **No Higgsfield spend.**
 Do not fire 1080 / 2K / 4K again. Do not revert desktop to 1080.
@@ -30,9 +30,11 @@ KCS shop. Do not restore the old fade-and-slide `HouseMotion` stub.
   `lib/animation/houseMotion.ts`. Booking has no scroll entrance. Reduced motion
   snaps slabs open and skips the tick. No second pin. No `cineEase` below the pin.
   No `whileInView`. No `transitions-parts`.
-- **Site rail is page-level.** `HouseRail` sits in `app/page.tsx` (wordmark → `#top`).
-  Film `Navigation` is no longer mounted. Do not put a second rail back inside
-  `AfterPin`. Loading readout sits under `--house-rail-h`.
+- **Site rail is page-level and fixed from frame one.** `HouseRail` sits in
+  `app/page.tsx` (wordmark → `#top`). Film `Navigation` is no longer mounted.
+  Do not put a second rail back inside `AfterPin`. Do not restore
+  "shop-rail after the pin only" — `CLAUDE.md` and `DESIGN_DIRECTION.md` were
+  aligned 2026-09-10. Loading readout sits under `--house-rail-h`.
 - **4K decode relief, same night.** `.film-stage.is-covered` hides video + grain
   once `.after-pin` covers the film. Grain has no `mix-blend-mode`. Lenis is
   desktop-only (`preferNativeScroll` in `lenis.ts`). `SEEK_EPSILON` is `2/24` in
